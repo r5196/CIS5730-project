@@ -37,5 +37,85 @@ public class DataManager_createFund_Test {
 		assertEquals(10000, f.getTarget());
 		
 	}
+	
+	
+	@Test
+	public void testCreationFailedNullResponse() {
+
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+			
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return "";
+
+			}
+			
+		});
+		
+		
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+		
+		assertNull(f);
+	}
+
+
+	@Test
+	public void testCreationFailedStatusMissing() {
+
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+			
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return "{\"unknown_field\":\"unauthorized\"}";
+
+			}
+			
+		});
+		
+		
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+		
+		assertNull(f);
+	}
+
+
+	@Test
+	public void testCreationFailedNotWellFormed() {
+
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+			
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return "{\"status\":\"unauthorized\"}";
+
+			}
+			
+		});
+		
+
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+		
+		assertNull(f);
+	}
+
+
+	@Test
+	public void testCreationFailedNotJSON() {
+
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+			
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return "this_is_not_json";
+
+			}
+			
+		});
+		
+		
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+		
+		assertNull(f);
+	}
 
 }
