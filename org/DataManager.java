@@ -29,6 +29,10 @@ public class DataManager {
 			map.put("login", login);
 			map.put("password", password);
 			String response = client.makeRequest("/findOrgByLoginAndPassword", map);
+			
+	        if (response == null) {
+	            throw new IllegalStateException("an error occurs in communicating with the server");
+	        }
 
 			JSONParser parser = new JSONParser();
 			JSONObject json = (JSONObject) parser.parse(response);
@@ -76,8 +80,8 @@ public class DataManager {
 			else return null;
 		}
 		catch (Exception e) {
-			// e.printStackTrace();
-			return null;
+		    throw new IllegalStateException("an error occurs in communicating with the server", e);
+			// return null;
 		}
 	}
 
