@@ -39,7 +39,7 @@ public class DataManager {
 				JSONObject data = (JSONObject)json.get("data");
 				String fundId = (String)data.get("_id");
 				String name = (String)data.get("name");
-				String description = (String)data.get("descrption");
+				String description = (String)data.get("description");
 				Organization org = new Organization(fundId, name, description);
 
 				JSONArray funds = (JSONArray)data.get("funds");
@@ -76,7 +76,7 @@ public class DataManager {
 			else return null;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		}
 	}
@@ -116,6 +116,22 @@ public class DataManager {
 	 * @return a new Fund object if successful; null if unsuccessful
 	 */
 	public Fund createFund(String orgId, String name, String description, long target) {
+        if(orgId == null || orgId.isEmpty()) {
+            System.out.println("Organization ID is invalid.");
+            return null;
+        }
+        if(name == null || name.isEmpty()) {
+            System.out.println("Fund name is invalid.");
+            return null;
+        }
+        if(description == null || description.isEmpty()) {
+            System.out.println("Fund description is invalid.");
+            return null;
+        }
+        if(target < 0) {
+            System.out.println("Target amount is invalid. It should be a non-negative number.");
+            return null;
+        }
 
 		try {
 
@@ -139,7 +155,7 @@ public class DataManager {
 
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		}	
 	}
