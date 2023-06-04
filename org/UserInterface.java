@@ -93,19 +93,17 @@ public class UserInterface {
 		String login = args[0];
 		String password = args[1];
 		
-		
-		Organization org = ds.attemptLogin(login, password);
-		
-		if (org == null) {
-			System.out.println("Login failed.");
-		}
-		else {
-
-			UserInterface ui = new UserInterface(ds, org);
-		
-			ui.start();
-		
-		}
+        try {
+            Organization org = ds.attemptLogin(login, password);
+            if (org == null) {
+                System.out.println("Login failed.");
+            } else {
+                UserInterface ui = new UserInterface(ds, org);      
+                ui.start();     
+            }
+        } catch (IllegalStateException e) {
+            System.out.println("an error occurs in communicating with the server");
+        }
 	}
 
 }
