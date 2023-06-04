@@ -6,117 +6,115 @@ import java.util.Map;
 import org.junit.Test;
 
 public class DataManager_attemptLogin_Test {
-	
+    
     @Test
-    public void testSuccessfulLogin() {
+    public void testSuccessfulAttemptLogin() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
-                return "{\"status\":\"success\", \"data\": {\"_id\":\"123\", \"name\":\"Test Org\", \"description\":\"This is a test organization\", "
-                        + "\"funds\":[{\"_id\":\"456\", \"name\":\"Fund 1\", \"description\":\"This is fund 1\", \"target\":1000, "
-                        + "\"donations\": [{\"contributor\":\"789\", \"amount\":500, \"date\":\"2023-06-04\"}]}]}}";
+                return "{\"status\":\"success\", \"data\": {\"_id\":\"999\", \"name\":\"New Org\", \"description\":\"This is a new organization\", "
+                        + "\"funds\":[{\"_id\":\"888\", \"name\":\"Fund New\", \"description\":\"This is a new fund\", \"target\":5000, "
+                        + "\"donations\": [{\"contributor\":\"777\", \"amount\":3000, \"date\":\"2023-08-04T00:00:00Z\"}]}]}}";
             }
         });
-        
         
         Organization org = dm.attemptLogin("login", "password");
         
         assertNotNull(org);
-        assertEquals("123", org.getId());
-        assertEquals("Test Org", org.getName());
-        assertEquals("This is a test organization", org.getDescription());
+        assertEquals("999", org.getId());
+        assertEquals("New Org", org.getName());
+        assertEquals("This is a new organization", org.getDescription());
         assertEquals(1, org.getFunds().size());
         Fund fund = org.getFunds().get(0);
-        assertEquals("456", fund.getId());
-        assertEquals("Fund 1", fund.getName());
-        assertEquals("This is fund 1", fund.getDescription());
-        assertEquals(1000, fund.getTarget());
+        assertEquals("888", fund.getId());
+        assertEquals("Fund New", fund.getName());
+        assertEquals("This is a new fund", fund.getDescription());
+        assertEquals(5000, fund.getTarget());
         assertEquals(1, fund.getDonations().size());
         Donation donation = fund.getDonations().get(0);
-        assertEquals("456", donation.getFundId());
-        assertEquals(500, donation.getAmount());
-        assertEquals("June 04, 2023", donation.getDate());
+        assertEquals("888", donation.getFundId());
+        assertEquals(3000, donation.getAmount());
+        assertEquals("August 04, 2023", donation.getDate());
     }
+
 	
 
-	@Test
-	public void testLoginFailedNullResponse() {
+	@Test(expected = IllegalStateException.class)
+	public void testUnsucessfulAttemptLoginWithNullResponse() {
 
 		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
 			
 			@Override
 			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "";
+				return null;
 
 			}
 			
 		});
 		
 		
-		Organization org = dm.attemptLogin("cleoyaojiang", "password");
+		dm.attemptLogin("login", "password");
+	}
+
+
+	@Test(expected = IllegalStateException.class)
+	public void testUnsucessfulAttemptLoginWithStatusMissing() {
+
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+			
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "{\"data\": {\"_id\":\"999\", \"description\":\"This is a new organization\", "
+                + "\"funds\":[{\"_id\":\"888\", \"name\":\"Fund New\", \"description\":\"This is a new fund\", \"target\":5000, "
+                + "\"donations\": [{\"contributor\":\"777\", \"amount\":3000, \"date\":\"2023-08-04T00:00:00Z\"}]}]}}";
+
+			}
+			
+		});
 		
-		assertNull(org);
+		
+		dm.attemptLogin("login", "password");
 	}
 
 
 	@Test
-	public void testLoginFailedStatusMissing() {
+	public void testUnsucessfulAttemptLoginWithStatusFailed() {
 
 		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
 			
 			@Override
 			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "{\"unknown_field\":\"unauthorized\"}";
+                return "{\"status\":\"unsuccessful\", \"data\": {\"_id\":\"999\", \"name\":\"New Org\", \"description\":\"This is a new organization\", "
+                + "\"funds\":[{\"_id\":\"888\", \"name\":\"Fund New\", \"description\":\"This is a new fund\", \"target\":5000, "
+                + "\"donations\": [{\"contributor\":\"777\", \"amount\":3000, \"date\":\"2023-08-04T00:00:00Z\"}]}]}}";
 
 			}
 			
 		});
 		
 		
-		Organization org = dm.attemptLogin("cleoyaojiang", "password");
-		
-		assertNull(org);
-	}
-
-
-	@Test
-	public void testLoginFailedNotWellFormed() {
-
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "{\"status\":\"unauthorized\"}";
-
-			}
-			
-		});
-		
-		
-		Organization org = dm.attemptLogin("cleoyaojiang", "password");
+		Organization org = dm.attemptLogin("login", "password");
 		
 		assertNull(org);
 	}
 	
 	
-	@Test
-	public void testLoginFailedNotJSON() {
+	@Test(expected = IllegalStateException.class)
+	public void testLoginFailsWithInvalidJSON() {
 
 		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
 			
 			@Override
 			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "this_is_not_json";
+				return "Json is invalid";
 
 			}
 			
 		});
 		
 		
-		Organization org = dm.attemptLogin("cleoyaojiang", "password");
-		
-		assertNull(org);
+		dm.attemptLogin("login", "password");
 	}
 }
