@@ -6,103 +6,91 @@ import org.junit.Test;
 
 public class DataManager_getContributorName_Test {
 	
-	@Test
-	public void testSuccessfulLookup() {
+    @Test
+    public void testSuccessfulContributorNameLookup() {
 
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "{\"status\":\"success\",\"data\":\"cleoyaojiang\"}";
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+            
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "{\"status\":\"success\",\"data\":\"newUser\"}";
 
-			}
-			
-		});
-		
-		
-		String name = dm.getContributorName("123");
-		
-		assertNotNull(name);
-		assertEquals("cleoyaojiang", name);
-	}
+            }
+            
+        });
+        
+        String name = dm.getContributorName("456");
+        
+        assertNotNull(name);
+        assertEquals("newUser", name);
+    }
 
+    @Test
+    public void testContributorNameLookupWithNullResponse() {
 
-	@Test
-	public void testLookupFailedNullResponse() {
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+            
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return null;
+            }
+            
+        });
+        
+        String name = dm.getContributorName("789");
+        
+        assertNull(name);
+    }
 
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "";
+    @Test
+    public void testContributorNameLookupWithStatusMissingInResponse() {
 
-			}
-			
-		});
-		
-		
-		String name = dm.getContributorName("123");
-		
-		assertNull(name);
-	}
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+            
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "{\"data\":\"newUser\"}";
+            }
+            
+        });
+        
+        String name = dm.getContributorName("101112");
+        
+        assertNull(name);
+    }
 
+    @Test
+    public void testContributorNameLookupWithInvalidResponse() {
 
-	@Test
-	public void testLookupFailedStatusMissing() {
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+            
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "{\"status\":\"unsuccessful\"}";
+            }
+            
+        });
+        
+        String name = dm.getContributorName("131415");
+        
+        assertNull(name);
+    }
 
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "{\"unknown_field\":\"unauthorized\"}";
+    @Test
+    public void testContributorNameLookupWithNonJSONResponse() {
 
-			}
-			
-		});
-		
-		
-		String name = dm.getContributorName("123");
-		
-		assertNull(name);
-	}
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+            
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "Json is invalid";
+            }
+            
+        });
+        
+        String name = dm.getContributorName("161718");
+        
+        assertNull(name);
+    }
 
-
-	@Test
-	public void testLookupFailedNotWellFormed() {
-
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "{\"status\":\"unauthorized\"}";
-
-			}
-			
-		});
-		
-		
-		String name = dm.getContributorName("123");
-		
-		assertNull(name);
-	}
-
-	
-	@Test
-	public void testLookupFailedNotJSON() {
-
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "this_is_not_json";
-
-			}
-			
-		});
-		
-		
-		String name = dm.getContributorName("123");
-		
-		assertNull(name);
-	}
 }
