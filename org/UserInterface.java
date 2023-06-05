@@ -60,9 +60,17 @@ public class UserInterface {
 		
 		System.out.print("Enter the fund name: ");
 		String name = in.nextLine().trim();
+		while (name.isEmpty()) {
+			System.out.println("Invalid name. Please enter a name that is non-empty: ");
+			name = in.nextLine().trim();
+		}
 		
 		System.out.print("Enter the fund description: ");
 		String description = in.nextLine().trim();
+		while (description.isEmpty()) {
+			System.out.println("Invalid description. Please enter a description that is non-empty: ");
+                        description = in.nextLine().trim();
+                }
 		
 		long target = 0;
 		boolean isValidTarget = false;
