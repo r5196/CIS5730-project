@@ -29,16 +29,30 @@ public class UserInterface {
 				}
 				System.out.println("Enter the fund number to see more information.");
 			}
-			System.out.println("Enter 0 to create a new fund");
-			int option = in.nextInt();
-			in.nextLine();
+
+			System.out.println("Enter 0 to create a new fund:");
+
+			int option = 0;
+			boolean isValidOption = false;
+			
+			while (!isValidOption) {
+				try {
+					option = Integer.parseInt(in.nextLine());
+					isValidOption = true;
+				} catch (NumberFormatException e) {
+					System.out.println("Invalid input. Please enter a valid fund number or 0 to create a new fund:");
+				}
+			}
+
 			if (option == 0) {
-				createFund(); 
-			}
-			else {
+				createFund();
+			} else if (option >= 1 && option <= org.getFunds().size()) {
 				displayFund(option);
+			} else {
+				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
-		}			
+
+		}				
 			
 	}
 	
