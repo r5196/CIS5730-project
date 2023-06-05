@@ -64,9 +64,18 @@ public class UserInterface {
 		System.out.print("Enter the fund description: ");
 		String description = in.nextLine().trim();
 		
-		System.out.print("Enter the fund target: ");
-		long target = in.nextInt();
-		in.nextLine();
+		long target = 0;
+		boolean isValidTarget = false;
+		
+		while (!isValidTarget) {
+			System.out.print("Enter the fund target: ");
+			try {
+				target = Long.parseLong(in.nextLine());
+				isValidTarget = true;
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input. Please enter a valid target amount: ");
+			}
+		}
 
 		Fund fund = dataManager.createFund(org.getId(), name, description, target);
 		org.getFunds().add(fund);
