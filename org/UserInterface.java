@@ -1,3 +1,4 @@
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Scanner;
 
@@ -73,10 +74,25 @@ public class UserInterface {
 		
 		List<Donation> donations = fund.getDonations();
 		System.out.println("Number of donations: " + donations.size());
+		long totalDonation = 0;
 		for (Donation donation : donations) {
 			System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + donation.getDate());
+			totalDonation += donation.getAmount();
 		}
-	
+		
+		long target = fund.getTarget();
+//		if(target.equals(null)) {
+//			continue;
+//		}
+//		System.out.print(target);
+		double number = (double) totalDonation / target;
+		
+		NumberFormat percent = NumberFormat.getPercentInstance();//import header
+		percent.setMinimumFractionDigits(0); // 
+	    String percentage = percent.format(number);
+	    System.out.print("Total donation amount: $"+totalDonation+"(" + percentage + " of target)." + "\r\n");
+	    totalDonation = 0;
+		
 		
 		System.out.println("Press the Enter key to go back to the listing of funds");
 		in.nextLine();
@@ -93,17 +109,19 @@ public class UserInterface {
 		String login = args[0];
 		String password = args[1];
 		
-        try {
-            Organization org = ds.attemptLogin(login, password);
-            if (org == null) {
-                System.out.println("Login failed.");
-            } else {
-                UserInterface ui = new UserInterface(ds, org);      
-                ui.start();     
-            }
-        } catch (IllegalStateException e) {
-            System.out.println("an error occurs in communicating with the server");
-        }
+		
+		Organization org = ds.attemptLogin(login, password);
+		
+		if (org == null) {
+			System.out.println("Login failed.");
+		}
+		else {
+
+			UserInterface ui = new UserInterface(ds, org);
+		
+			ui.start();
+		
+		}
 	}
 
 }
