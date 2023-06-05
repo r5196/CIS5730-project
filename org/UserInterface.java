@@ -30,16 +30,30 @@ public class UserInterface {
 				}
 				System.out.println("Enter the fund number to see more information.");
 			}
-			System.out.println("Enter 0 to create a new fund");
-			int option = in.nextInt();
-			in.nextLine();
+
+			System.out.println("Enter 0 to create a new fund:");
+
+			int option = 0;
+			boolean isValidOption = false;
+			
+			while (!isValidOption) {
+				try {
+					option = Integer.parseInt(in.nextLine());
+					isValidOption = true;
+				} catch (NumberFormatException e) {
+					System.out.println("Invalid input. Please enter a valid fund number or 0 to create a new fund:");
+				}
+			}
+
 			if (option == 0) {
-				createFund(); 
-			}
-			else {
+				createFund();
+			} else if (option >= 1 && option <= org.getFunds().size()) {
 				displayFund(option);
+			} else {
+				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
-		}			
+
+		}				
 			
 	}
 	
@@ -47,13 +61,30 @@ public class UserInterface {
 		
 		System.out.print("Enter the fund name: ");
 		String name = in.nextLine().trim();
+		while (name.isEmpty()) {
+			System.out.println("Invalid name. Please enter a name that is non-empty: ");
+			name = in.nextLine().trim();
+		}
 		
 		System.out.print("Enter the fund description: ");
 		String description = in.nextLine().trim();
+		while (description.isEmpty()) {
+			System.out.println("Invalid description. Please enter a description that is non-empty: ");
+                        description = in.nextLine().trim();
+                }
 		
-		System.out.print("Enter the fund target: ");
-		long target = in.nextInt();
-		in.nextLine();
+		long target = 0;
+		boolean isValidTarget = false;
+		
+		while (!isValidTarget) {
+			System.out.print("Enter the fund target: ");
+			try {
+				target = Long.parseLong(in.nextLine());
+				isValidTarget = true;
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input. Please enter a valid target amount: ");
+			}
+		}
 
 		Fund fund = dataManager.createFund(org.getId(), name, description, target);
 		org.getFunds().add(fund);
