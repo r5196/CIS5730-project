@@ -8,13 +8,13 @@ The Additional Tasks that you would like graded for this phase (**2.1 - 2.3, 2.4
 
 
 ## Q3
-A description of any bugs that you found and fixed in Task 1.2 (and also in 1.4 if you chose to do it)
+Any known bugs or other issues with the tasks you attempted in this phase.
 
 ## Q4
 Instructions on how to start each app, if you changed anything from the original version of the code, e.g. the name of the Java main class or JavaScript entry point, arguments to the programs, etc. If you did not change anything, you may omit this.
 
 ## Q5
 A brief but specific description of each team member’s contributions, including the task numbers that they worked on. Please do not simply write “all members contributed equally to all tasks” since we know that’s not really the case. 😁
-**Yao Jiang did tasks 1.1 and 1.7.
-Renyu did tasks 1.2 and 1.8. 
-Yuqi Wang did tasks 1.3 and 1.9**
+**Yao Jiang did tasks 2.1 and 2.4.
+Renyu did tasks 2.2 and 2.5. 
+Yuqi Wang did tasks 2.3 and 2.6**
