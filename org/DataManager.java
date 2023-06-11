@@ -9,6 +9,7 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class DataManager {
 
@@ -27,67 +28,71 @@ public class DataManager {
 		if (login == null || password == null) {
 			throw new IllegalArgumentException("login and password cannot be null");
 		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("login", login);
+		map.put("password", password);
+		if (client == null) {
+			throw new IllegalStateException("WebClient is null");
+		}
+		String response = client.makeRequest("/findOrgByLoginAndPassword", map);
 
+		if (response == null) {
+			throw new IllegalStateException("webClient returns null");
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
 		try {
-			Map<String, Object> map = new HashMap<>();
-			map.put("login", login);
-			map.put("password", password);
-			String response = client.makeRequest("/findOrgByLoginAndPassword", map);
+			json = (JSONObject) parser.parse(response);
+		} catch (Exception e) {
+			throw new IllegalStateException("webClient returns invalid JSON");
+		}
+		String status = (String)json.get("status");
+		if (status == null) {
+			throw new IllegalStateException("webClient returns unknown status");
+		}
 
-	        if (response == null) {
-	            throw new IllegalStateException("an error occurs in communicating with the server because webClient returns null");
-	        }
+		if (status.equals("success")) {
+			JSONObject data = (JSONObject)json.get("data");
+			String fundId = (String)data.get("_id");
+			String name = (String)data.get("name");
+			String description = (String)data.get("description");
+			Organization org = new Organization(fundId, name, description);
 
-			JSONParser parser = new JSONParser();
-			JSONObject json = (JSONObject) parser.parse(response);
-			String status = (String)json.get("status");
+			JSONArray funds = (JSONArray)data.get("funds");
+			Iterator it = funds.iterator();
+			while(it.hasNext()){
+				JSONObject fund = (JSONObject) it.next();
+				fundId = (String)fund.get("_id");
+				name = (String)fund.get("name");
+				description = (String)fund.get("description");
+				long target = (Long)fund.get("target");
 
-			if (status.equals("success")) {
-				JSONObject data = (JSONObject)json.get("data");
-				String fundId = (String)data.get("_id");
-				String name = (String)data.get("name");
-				String description = (String)data.get("description");
-				Organization org = new Organization(fundId, name, description);
+				Fund newFund = new Fund(fundId, name, description, target);
 
-				JSONArray funds = (JSONArray)data.get("funds");
-				Iterator it = funds.iterator();
-				while(it.hasNext()){
-					JSONObject fund = (JSONObject) it.next(); 
-					fundId = (String)fund.get("_id");
-					name = (String)fund.get("name");
-					description = (String)fund.get("description");
-					long target = (Long)fund.get("target");
-
-					Fund newFund = new Fund(fundId, name, description, target);
-
-					JSONArray donations = (JSONArray)fund.get("donations");
-					List<Donation> donationList = new LinkedList<>();
-					Iterator it2 = donations.iterator();
-					while(it2.hasNext()){
-						JSONObject donation = (JSONObject) it2.next();
-						String contributorId = (String)donation.get("contributor");
-						String contributorName = this.getContributorName(contributorId);
-						long amount = (Long)donation.get("amount");
-						String date = (String)donation.get("date");
-						donationList.add(new Donation(fundId, contributorName, amount, date));
-					}
-
-					newFund.setDonations(donationList);
-
-					org.addFund(newFund);
-
+				JSONArray donations = (JSONArray)fund.get("donations");
+				List<Donation> donationList = new LinkedList<>();
+				Iterator it2 = donations.iterator();
+				while(it2.hasNext()){
+					JSONObject donation = (JSONObject) it2.next();
+					String contributorId = (String)donation.get("contributor");
+					String contributorName = this.getContributorName(contributorId);
+					long amount = (Long)donation.get("amount");
+					String date = (String)donation.get("date");
+					donationList.add(new Donation(fundId, contributorName, amount, date));
 				}
 
-				return org;
-			} else if (status.equals("error")) {
-				throw new IllegalStateException("an error occurs in communicating with the server because webClient returns error");
+				newFund.setDonations(donationList);
+
+				org.addFund(newFund);
+
 			}
-			else return null;
+
+			return org;
+		} else if (status.equals("error")) {
+			throw new IllegalStateException("an error occurs in communicating with the server because webClient returns error");
 		}
-		catch (Exception e) {
-		    throw new IllegalStateException("an error occurs in communicating with the server", e);
-			// return null;
-		}
+		else return null;
 	}
 
 	/**
