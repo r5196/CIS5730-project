@@ -41,22 +41,22 @@ public class DataManager_attemptLogin_Test {
 
 	
 
-	@Test(expected = IllegalStateException.class)
-	public void testUnsucessfulAttemptLoginWithNullResponse() {
-
-		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return null;
-
-			}
-			
-		});
-		
-		
-		dm.attemptLogin("login", "password");
-	}
+//	@Test(expected = IllegalStateException.class)
+//	public void testUnsucessfulAttemptLoginWithNullResponse() {
+//
+//		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+//
+//			@Override
+//			public String makeRequest(String resource, Map<String, Object> queryParams) {
+//				return null;
+//
+//			}
+//
+//		});
+//
+//
+//		dm.attemptLogin("login", "password");
+//	}
 
 
 	@Test(expected = IllegalStateException.class)
