@@ -1,4 +1,7 @@
 import java.text.NumberFormat;
+import java.util.*;
+
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Scanner;
 
@@ -92,10 +95,14 @@ public class UserInterface {
 		
 	}
 	
-	
 	public void displayFund(int fundNumber) {
 		
+		Map<String, ArrayList<Integer>> donationMap = new HashMap<>();
+		Map<Donation, Integer> donationMapTimes = new HashMap<>();
+		PriorityQueue<Map.Entry<String, ArrayList<Integer>>> pq = new PriorityQueue<>((a, b) ->
+		b.getValue().get(1) - a.getValue().get(1));
 		Fund fund = org.getFunds().get(fundNumber - 1);
+		
 		
 		System.out.println("\n\n");
 		System.out.println("Here is information about this fund:");
@@ -106,23 +113,76 @@ public class UserInterface {
 		List<Donation> donations = fund.getDonations();
 		System.out.println("Number of donations: " + donations.size());
 		long totalDonation = 0;
-		for (Donation donation : donations) {
-			System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + donation.getDate());
-			totalDonation += donation.getAmount();
+		
+		System.out.println("Press 1 for Individual Donation Displays, 2 for Aggregate Donation Display");
+		int choice = Integer.parseInt(in.nextLine());
+		
+		if(choice  == 1) {
+			for (Donation donation : donations) {
+				if(donation == null) {
+					continue;
+				}
+				System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + donation.getDate());
+				totalDonation += donation.getAmount();
+				long target = fund.getTarget();
+				double number = (double) totalDonation / target;
+				
+				NumberFormat percent = NumberFormat.getPercentInstance();//import header
+				percent.setMinimumFractionDigits(0); // 
+			    String percentage = percent.format(number);
+			    System.out.print("Total donation amount: $"+totalDonation+"(" + percentage + " of target)." + "\r\n");
+			    totalDonation = 0;
+			}
+	   }else if(choice  == 2) {
+		  
+		  for (Donation donation : donations) {
+				
+				if(donation == null) {
+					continue;
+				}
+				
+				if(!donationMap.containsKey(donation.getContributorName())) {
+					ArrayList<Integer> detail = new ArrayList<>();
+					detail.add(1);
+					detail.add((int)donation.getAmount());
+					
+					donationMap.put(donation.getContributorName(), detail);
+					
+				}else {
+					int times = donationMap.get(donation.getContributorName()).get(0);
+					int amount = donationMap.get(donation.getContributorName()).get(1);
+					donationMap.get(donation.getContributorName()).set(0,times = times + 1);
+					donationMap.get(donation.getContributorName()).set(1, amount + (int)donation.getAmount());
+				
+				}
+				
+				
+			}
+		  
+		  
+			for(Map.Entry<String, ArrayList<Integer>> donationSet : donationMap.entrySet()) {
+				pq.add(donationSet);
+//				System.out.println(donationSet.getKey());
+//				System.out.println(donationSet.getValue().get(0));
+//				System.out.println(donationSet.getValue().get(1));
+//				
+			}
+			
+			
+			while(!pq.isEmpty()) {
+				Map.Entry<String, ArrayList<Integer>> donation  = pq.poll();
+				String Contributor = donation.getKey();
+				long times = donation.getValue().get(0);
+				long totalAmount = donation.getValue().get(1);
+				System.out.println(Contributor + ", " + times + " donations, " + "$" + totalAmount + " total");
+//				System.out.println(pq.poll().getKey());
+//				System.out.println(pq.poll().getValue().get(0));
+//				System.out.println(pq.poll().getValue().get(1));
+			}
+
 		}
 		
-		long target = fund.getTarget();
-//		if(target.equals(null)) {
-//			continue;
-//		}
-//		System.out.print(target);
-		double number = (double) totalDonation / target;
 		
-		NumberFormat percent = NumberFormat.getPercentInstance();//import header
-		percent.setMinimumFractionDigits(0); // 
-	    String percentage = percent.format(number);
-	    System.out.print("Total donation amount: $"+totalDonation+"(" + percentage + " of target)." + "\r\n");
-	    totalDonation = 0;
 		
 		
 		System.out.println("Press the Enter key to go back to the listing of funds");
@@ -137,8 +197,8 @@ public class UserInterface {
 		
 		DataManager ds = new DataManager(new WebClient("localhost", 3001));
 		
-		String login = args[0];
-		String password = args[1];
+		String login = "org1";
+		String password = "123123";
 
 		try {
 		    Organization org = ds.attemptLogin(login, password);
@@ -151,6 +211,7 @@ public class UserInterface {
 		} catch (IllegalStateException e) {
 		    System.out.println("an error occurs in communicating with the server");
 		}
+
 		
 	}
 
