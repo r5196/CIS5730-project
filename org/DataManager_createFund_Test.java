@@ -18,28 +18,28 @@ public class DataManager_createFund_Test {
 	public void testSuccessfulCreation() {
 
 		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
-			
+
 			@Override
 			public String makeRequest(String resource, Map<String, Object> queryParams) {
 				return "{\"status\":\"success\",\"data\":{\"_id\":\"12345\",\"name\":\"new fund\",\"description\":\"this is the new fund\",\"target\":10000,\"org\":\"5678\",\"donations\":[],\"__v\":0}}";
 
 			}
-			
+
 		});
-		
-		
+
+
 		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
-		
+
 		assertNotNull(f);
 		assertEquals("this is the new fund", f.getDescription());
 		assertEquals("12345", f.getId());
 		assertEquals("new fund", f.getName());
 		assertEquals(10000, f.getTarget());
-		
+
 	}
 	
 	
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testInvalidJsonObjectInCreation() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
@@ -73,7 +73,7 @@ public class DataManager_createFund_Test {
     }
 
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testStatusMissingCreation() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -87,12 +87,10 @@ public class DataManager_createFund_Test {
         });
         
         
-        Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
-        
-        assertNull(f);
+        dm.createFund("12345", "new fund", "this is the new fund", 10000);
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputIdCreationWithNull() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -106,12 +104,10 @@ public class DataManager_createFund_Test {
         });
         
         // id is null
-        Fund f = dm.createFund(null, "new fund", "this is the new fund", 10000);
-        
-        assertNull(f);       
+        dm.createFund(null, "new fund", "this is the new fund", 10000);
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputNameCreationWithNull() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -125,12 +121,10 @@ public class DataManager_createFund_Test {
         });
         
         // name is null
-        Fund f = dm.createFund("12345", null, "this is the new fund", 10000);
-        
-        assertNull(f);       
+        dm.createFund("12345", null, "this is the new fund", 10000);
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputDesCreationWithNull() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -144,12 +138,10 @@ public class DataManager_createFund_Test {
         });
         
         // des is null
-        Fund f = dm.createFund("12345", "new fund", null, 10000);
-        
-        assertNull(f);       
+        dm.createFund("12345", "new fund", null, 10000);
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputIdCreationWithEmptyString() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -163,12 +155,10 @@ public class DataManager_createFund_Test {
         });
         
         // id is empty
-        Fund f = dm.createFund("", "new fund", "this is the new fund", 10000);
-        
-        assertNull(f);    
+        dm.createFund("", "new fund", "this is the new fund", 10000);
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputNameCreationWithEmptyString() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -182,12 +172,11 @@ public class DataManager_createFund_Test {
         });
         
         // name is empty
-        Fund f = dm.createFund("12345", "", "this is the new fund", 10000);
-        
-        assertNull(f);       
+        dm.createFund("12345", "", "this is the new fund", 10000);
+
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputDesCreationWithEmptyString() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -201,12 +190,11 @@ public class DataManager_createFund_Test {
         });
         
         // des is empty
-        Fund f = dm.createFund("12345", "new fund", "", 10000);
-        
-        assertNull(f);       
+        dm.createFund("12345", "new fund", "", 10000);
+
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidInputCreationWithNegativeNumber() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -220,12 +208,11 @@ public class DataManager_createFund_Test {
         });
         
         // target is negative
-        Fund f = dm.createFund("12345", "new fund", "this is the new fund", -10000);
-        
-        assertNull(f);    
+        dm.createFund("12345", "new fund", "this is the new fund", -10000);
+
     }
     
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testExceptionInCreation() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
@@ -234,8 +221,7 @@ public class DataManager_createFund_Test {
             }
         });
         
-        Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
-        assertNull(f);
+        dm.createFund("12345", "new fund", "this is the new fund", 10000);
     }
 
 }

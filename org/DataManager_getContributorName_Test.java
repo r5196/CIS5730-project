@@ -25,7 +25,7 @@ public class DataManager_getContributorName_Test {
         assertEquals("newUser", name);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testContributorNameLookupWithNullResponse() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -37,12 +37,11 @@ public class DataManager_getContributorName_Test {
             
         });
         
-        String name = dm.getContributorName("789");
-        
-        assertNull(name);
+        dm.getContributorName("789");
+
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testContributorNameLookupWithStatusMissingInResponse() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -54,9 +53,7 @@ public class DataManager_getContributorName_Test {
             
         });
         
-        String name = dm.getContributorName("101112");
-        
-        assertNull(name);
+        dm.getContributorName("101112");
     }
 
     @Test
@@ -76,7 +73,7 @@ public class DataManager_getContributorName_Test {
         assertNull(name);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testContributorNameLookupWithNonJSONResponse() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
@@ -88,9 +85,8 @@ public class DataManager_getContributorName_Test {
             
         });
         
-        String name = dm.getContributorName("161718");
-        
-        assertNull(name);
+        dm.getContributorName("161718");
+
     }
 
 }
