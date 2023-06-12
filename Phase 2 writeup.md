@@ -13,7 +13,7 @@ Any known bugs or other issues with the tasks you attempted in this phase.
 ## Q4
 Instructions on how to start each app, if you changed anything from the original version of the code, e.g. the name of the Java main class or JavaScript entry point, arguments to the programs, etc. If you did not change anything, you may omit this.
 
-- Before, to run the program, you should run the UserInterface class, and pass the login ID and password that you created for an organization via the Admin app as the runtime arguments to the main method. 
+- **Before, to run the program, you should run the UserInterface class, and pass the login ID and password that you created for an organization via the Admin app as the runtime arguments to the main method.**
 ```
 	public static void main(String[] args) {
 		
@@ -23,7 +23,7 @@ Instructions on how to start each app, if you changed anything from the original
 		String password = args[1];
 ```
 
-- Now, to run the program, you should run the UserInterface class, but do not need to pass the login ID and password as the runtime arguments to the main method. The program will not ask you to enter the login ID and password that you created for an organization via the Admin app after the program runs. 
+- **Now, to run the program, you should run the UserInterface class, but do not need to pass the login ID and password as the runtime arguments to the main method. The program will now ask you to enter the login ID and password that you created for an organization via the Admin app after the program runs.**
 ```
 	public static void main(String[] args) {
 		
