@@ -184,6 +184,7 @@ public class UserInterface {
 				ui.start();
 			}
 		}
+		in.close();
 	}
 
 }
