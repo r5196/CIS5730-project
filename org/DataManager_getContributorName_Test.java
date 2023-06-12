@@ -89,4 +89,26 @@ public class DataManager_getContributorName_Test {
 
     }
 
+    @Test
+    public void testSuccessfulContributorNameLookupWithNoLoopUp() {
+
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "{\"status\":\"success\",\"data\":\"oldUser\"}";
+
+            }
+
+        });
+
+        String name = dm.getContributorName("456");
+        assertNotNull(name);
+        assertEquals("oldUser", name);
+
+        String nameAgain = dm.getContributorName("456");
+        assertNotNull(nameAgain);
+        assertEquals("oldUser", nameAgain);
+    }
+
 }

@@ -9,14 +9,15 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class DataManager {
 
 	private final WebClient client;
+	private Map<String, String> contributorNameCache;
 
 	public DataManager(WebClient client) {
 		this.client = client;
+		this.contributorNameCache = new HashMap<>();
 	}
 
 	/**
@@ -101,10 +102,15 @@ public class DataManager {
 	 * @return the name of the contributor on success; null if no contributor is found
 	 */
 	public String getContributorName(String id) {
-		Map<String, Object> map = new HashMap<>();
 		if (id == null) {
 			throw new IllegalArgumentException("id is null");
 		}
+
+		if (contributorNameCache.containsKey(id)) {
+			return contributorNameCache.get(id);
+		}
+
+		Map<String, Object> map = new HashMap<>();
 		map.put("id", id);
 
 		if (client == null) {
@@ -130,6 +136,7 @@ public class DataManager {
 		if (status.equals("success")) {
 			// String name = (String) json.get("data");
 			String name = json.get("data").toString();
+			contributorNameCache.put(id, name);
 			return name;
 		} else if (status.equals("error")) {
 			throw new IllegalStateException("webClient returns error");
@@ -151,16 +158,16 @@ public class DataManager {
 			throw new IllegalArgumentException("Fund name is invalid.");
             // return null;
         }
-        if (description == null || description.isEmpty()) {
+		if (description == null || description.isEmpty()) {
             // System.out.println("Fund description is invalid.");
 			throw new IllegalArgumentException("Fund description is invalid.");
             // return null;
         }
-        if (target < 0) {
-            // System.out.println("Target amount is invalid. It should be a non-negative number.");
+		if (target < 0) {
+			// System.out.println("Target amount is invalid. It should be a non-negative number.");
 			throw new IllegalArgumentException("Target amount is invalid. It should be a non-negative number.");
-            // return null;
-        }
+			// return null;
+		}
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("orgId", orgId);
