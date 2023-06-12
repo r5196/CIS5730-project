@@ -26,7 +26,7 @@ public class DataManager {
 	 */
 	public Organization attemptLogin(String login, String password) {
 		if (login == null || password == null) {
-			throw new IllegalArgumentException("login and password cannot be null");
+			throw new IllegalArgumentException("login or password is null");
 		}
 		Map<String, Object> map = new HashMap<>();
 		map.put("login", login);
