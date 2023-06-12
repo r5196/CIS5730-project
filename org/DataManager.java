@@ -148,21 +148,21 @@ public class DataManager {
 	 * @return a new Fund object if successful; null if unsuccessful
 	 */
 	public Fund createFund(String orgId, String name, String description, long target) {
-        if (orgId == null || orgId.isEmpty()) {
-            // System.out.println("Organization ID is invalid.");
+		if (orgId == null || orgId.isEmpty()) {
+			// System.out.println("Organization ID is invalid.");
 			throw new IllegalArgumentException("Organization ID is invalid.");
-            // return null;
-        }
-        if (name == null || name.isEmpty()) {
-            // System.out.println("Fund name is invalid.");
+			// return null;
+		}
+		if (name == null || name.isEmpty()) {
+			// System.out.println("Fund name is invalid.");
 			throw new IllegalArgumentException("Fund name is invalid.");
-            // return null;
-        }
+                        // return null;
+                }
 		if (description == null || description.isEmpty()) {
-            // System.out.println("Fund description is invalid.");
+			// System.out.println("Fund description is invalid.");
 			throw new IllegalArgumentException("Fund description is invalid.");
-            // return null;
-        }
+			// return null;
+                }
 		if (target < 0) {
 			// System.out.println("Target amount is invalid. It should be a non-negative number.");
 			throw new IllegalArgumentException("Target amount is invalid. It should be a non-negative number.");
