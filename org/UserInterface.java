@@ -18,27 +18,26 @@ public class UserInterface {
 	}
 	
 	public void start() {
-				
 		while (true) {
 			System.out.println("\n\n");
 			if (org.getFunds().size() > 0) {
 				System.out.println("There are " + org.getFunds().size() + " funds in this organization:");
-			
+
 				int count = 1;
 				for (Fund f : org.getFunds()) {
-					
+
 					System.out.println(count + ": " + f.getName());
-					
+
 					count++;
 				}
 				System.out.println("Enter the fund number to see more information.");
 			}
 
-			System.out.println("Enter 0 to create a new fund:");
+			System.out.println("Enter 0 to create a new fund or Enter -1 to logout:");
 
 			int option = 0;
 			boolean isValidOption = false;
-			
+
 			while (!isValidOption) {
 				try {
 					option = Integer.parseInt(in.nextLine());
@@ -48,16 +47,17 @@ public class UserInterface {
 				}
 			}
 
-			if (option == 0) {
+			if (option == -1) {
+				System.out.println("You have logged out.");
+				break;
+			} else if (option == 0) {
 				createFund();
 			} else if (option >= 1 && option <= org.getFunds().size()) {
 				displayFund(option);
 			} else {
 				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
-
-		}				
-			
+		}
 	}
 	
 	public void createFund() {
@@ -73,8 +73,8 @@ public class UserInterface {
 		String description = in.nextLine().trim();
 		while (description.isEmpty()) {
 			System.out.println("Invalid description. Please enter a description that is non-empty: ");
-                        description = in.nextLine().trim();
-                }
+			description = in.nextLine().trim();
+		}
 		
 		long target = 0;
 		boolean isValidTarget = false;
@@ -83,16 +83,27 @@ public class UserInterface {
 			System.out.print("Enter the fund target: ");
 			try {
 				target = Long.parseLong(in.nextLine());
+				if (target <= 0) {
+					System.out.println("Invalid target. Please enter a target that is greater than 0: ");
+					continue;
+				}
 				isValidTarget = true;
 			} catch (NumberFormatException e) {
 				System.out.println("Invalid input. Please enter a valid target amount: ");
 			}
 		}
 
-		Fund fund = dataManager.createFund(org.getId(), name, description, target);
-		org.getFunds().add(fund);
-
-		
+		try {
+			Fund fund = dataManager.createFund(org.getId(), name, description, target);
+			org.getFunds().add(fund);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			System.out.println("Do you want to retry the operation of creatfund? (Yes/No)");
+			String answer = in.nextLine().trim().toLowerCase();
+			if (answer.equals("yes")) {
+				createFund();
+			}
+		}
 	}
 	
 	public void displayFund(int fundNumber) {
@@ -192,27 +203,48 @@ public class UserInterface {
 		
 	}
 	
-	
 	public static void main(String[] args) {
 		
 		DataManager ds = new DataManager(new WebClient("localhost", 3001));
-		
-		String login = args[0];
-		String password = args[1];
+		Scanner in = new Scanner(System.in);
 
-		try {
-		    Organization org = ds.attemptLogin(login, password);
-		    if (org == null) {
-			System.out.println("Login failed.");
-		    } else {
-			UserInterface ui = new UserInterface(ds, org);      
-			ui.start();     
-		    }
-		} catch (IllegalStateException e) {
-		    System.out.println("an error occurs in communicating with the server");
+		while (true) {
+			System.out.print("Enter your login or type 'exit' to quit: ");
+			String login = in.nextLine().trim();
+			if (login.equalsIgnoreCase("exit")) {
+				break;
+			}
+			System.out.print("Enter your password or type 'exit' to quit: ");
+			String password = in.nextLine().trim();
+			if (login.equalsIgnoreCase("exit")) {
+				break;
+			}
+
+			Organization org = null;
+			try {
+				org = ds.attemptLogin(login, password);
+			} catch (Exception e) {
+				if (e instanceof IllegalArgumentException) {
+					System.out.println("Invalid Argument");
+				} else if (e instanceof IllegalStateException) {
+					System.out.println("an error occurs in communicating with the server");
+				}
+				System.out.println(e.getMessage());
+				System.out.println("Do you want to retry the operation of login? (Yes/No)");
+				String answer = in.nextLine().trim().toLowerCase();
+				if (answer.equals("yes")) {
+					main(args);
+				}
+			}
+
+			if (org == null) {
+				System.out.println("Login failed. Username/Password combination is incorrect");
+			} else {
+				UserInterface ui = new UserInterface(ds, org);
+				ui.start();
+			}
 		}
-
-		
+		in.close();
 	}
 
 }
