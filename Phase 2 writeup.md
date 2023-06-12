@@ -3,8 +3,9 @@
 The Additional Tasks that you would like graded for this phase (**2.1 - 2.3, 2.7 - 2.9**).
 
 ## Q2
-1. **Task 2.2 change each method in data manager file to pass robustness test cases. The task also requirs changes to orignial tests in phase 1. Finally the userinterface is changed to make UI display meaningful error message. After message, the user has the option of retrying the operation. This involes changes of each operation in userinterface class.**
-2. **Task 2.8 changes the start() method in user interface class. It has the option of logging out when variable option is set to -1. It also changes the way of starting app in main() method. This is in Q4. The change asks you to log back in.**
+1. **Task 2.1 changes get contributor name method in data manager class and adds private field and initialize it in constructor. The task also requirs changes to orignial tests in phase 1. In the method, if the contributor id has been looked up, directly return its name, if it has not been looked up, before return its name, add the id and its name to the cache.**
+3. **Task 2.2 change each method in data manager file to pass robustness test cases. The task also requirs changes to orignial tests in phase 1. Finally the userinterface is changed to make UI display meaningful error message. After message, the user has the option of retrying the operation. This involes changes of each operation in userinterface class.**
+4. **Task 2.8 changes the start() method in user interface class. It has the option of logging out when variable option is set to -1. It also changes the way of starting app in main() method. This is in Q4. The change asks you to log back in.**
 
 
 ## Q3
