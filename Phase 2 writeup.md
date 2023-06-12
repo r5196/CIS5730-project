@@ -3,7 +3,7 @@
 The Additional Tasks that you would like graded for this phase (**2.1 - 2.3, 2.7 - 2.9**).
 
 ## Q2
-1. **Task 2.2 adds more unit tests to DataManager_createFund_Tests.java to prevent any invalid inputs or the circumstances that would lead to the failure of creating funds. It also adds two files named DataManager_getContributorName_Test.java and DataManager_attemptLogin_Test.java. These are the unit tests for the getContributorName and attemptLogin method in the DataManager.java file.**
+1. **Task 2.2 change each method in data manager file to pass robustness test cases. The task also requirs changes to orignial tests in phase 1. Finally the userinterface is changed to make UI display meaningful error message. After message, the user has the option of retrying the operation. This involes changes of each method in userinterface class. **
 2. **Task 2.8 changes the attemptLogin() method in DataManager class. It changes “descrption” to “description” . It also changes the createFund() method. It adds if conditions to handle input invalidation.**
 
 
