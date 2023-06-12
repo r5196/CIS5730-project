@@ -30,7 +30,7 @@ public class UserInterface {
 				System.out.println("Enter the fund number to see more information.");
 			}
 
-			System.out.println("Enter 0 to create a new fund:");
+			System.out.println("Enter 0 to create a new fund or Enter -1 to logout:");
 
 			int option = 0;
 			boolean isValidOption = false;
@@ -44,7 +44,10 @@ public class UserInterface {
 				}
 			}
 
-			if (option == 0) {
+			if (option == -1) {
+				System.out.println("You have logged out.");
+				break;
+			} else if (option == 0) {
 				createFund();
 			} else if (option >= 1 && option <= org.getFunds().size()) {
 				displayFund(option);
@@ -143,33 +146,43 @@ public class UserInterface {
 	public static void main(String[] args) {
 		
 		DataManager ds = new DataManager(new WebClient("localhost", 3001));
-		
-		String login = args[0];
-		String password = args[1];
+		Scanner in = new Scanner(System.in);
 
-		Organization org = null;
-		try {
-			org = ds.attemptLogin(login, password);
-		} catch (Exception e) {
-			if (e instanceof IllegalArgumentException) {
-				System.out.println("Invalid Argument");
-			} else if (e instanceof IllegalStateException) {
-				System.out.println("an error occurs in communicating with the server");
+		while (true) {
+			System.out.print("Enter your login or type 'exit' to quit: ");
+			String login = in.nextLine().trim();
+			if (login.equalsIgnoreCase("exit")) {
+				break;
 			}
-			System.out.println(e.getMessage());
-			System.out.println("Do you want to retry the operation of login? (Yes/No)");
-			Scanner in = new Scanner(System.in);
-			String answer = in.nextLine().trim().toLowerCase();
-			if (answer.equals("yes")) {
-				main(args);
+			System.out.print("Enter your password or type 'exit' to quit: ");
+			String password = in.nextLine().trim();
+			if (login.equalsIgnoreCase("exit")) {
+				break;
 			}
-		}
 
-		if (org == null) {
-			System.out.println("Login failed.");
-		} else {
-			UserInterface ui = new UserInterface(ds, org);
-			ui.start();
+			Organization org = null;
+			try {
+				org = ds.attemptLogin(login, password);
+			} catch (Exception e) {
+				if (e instanceof IllegalArgumentException) {
+					System.out.println("Invalid Argument");
+				} else if (e instanceof IllegalStateException) {
+					System.out.println("an error occurs in communicating with the server");
+				}
+				System.out.println(e.getMessage());
+				System.out.println("Do you want to retry the operation of login? (Yes/No)");
+				String answer = in.nextLine().trim().toLowerCase();
+				if (answer.equals("yes")) {
+					main(args);
+				}
+			}
+
+			if (org == null) {
+				System.out.println("Login failed. Username/Password combination is incorrect");
+			} else {
+				UserInterface ui = new UserInterface(ds, org);
+				ui.start();
+			}
 		}
 	}
 
