@@ -59,14 +59,11 @@ public class DataManager_deleteFund_Test {
 	    } 
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testDeleteFund_FundIdIsNull() {
 	    DataManager dm = new DataManager(new WebClient("localhost", 3001));
-	    try {
-	        dm.deleteFund(null);
-	        fail("DataManager.deleteFund does not throw IllegalArgumentException when fundId is null");
-	    } catch (IllegalArgumentException e) {
-	    }
+		dm.deleteFund(null);
+		fail("DataManager.deleteFund does not throw IllegalArgumentException when fundId is null");
 	}
 	
 	@Test
@@ -128,5 +125,17 @@ public class DataManager_deleteFund_Test {
 
         }
     }
+
+	@Test(expected = IllegalStateException.class)
+	public void testDeleteFund_WebClientReturnsMissingStatus() {
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return "{\"data\":{\"_id\":\"12345\",\"name\":\"new fund\",\"description\":\"this is the new fund\",\"target\":10000,\"org\":\"5678\",\"donations\":[],\"__v\":0}}";
+			}
+		});
+		dm.deleteFund("12345");
+		fail("DataManager.deleteFund does not throw IllegalStateException when WebClient returns missing status");
+	}
 
 }
