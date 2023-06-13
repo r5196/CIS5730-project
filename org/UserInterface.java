@@ -99,9 +99,7 @@ public class UserInterface {
 			org.getFunds().add(fund);
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
-			System.out.println("Do you want to retry the operation of creatfund? (Yes/No)");
-			String answer = in.nextLine().trim().toLowerCase();
-			if (answer.equals("yes")) {
+			if (retryOperation("createFund")) {
 				createFund();
 			}
 		}
@@ -205,9 +203,7 @@ public class UserInterface {
 					}
 				} catch (IllegalStateException e) {
 					System.out.println("Error: " + e.getMessage());
-					System.out.println("Do you want to retry the operation of deleteFund? (Yes/No)");
-					String answer = in.nextLine().trim().toLowerCase();
-					if (answer.equals("yes")) {
+					if (retryOperation("deleteFund")) {
 						displayFund(fundNumber);
 					}
 				}
@@ -272,7 +268,15 @@ public class UserInterface {
         }
     }
 
-
+	/**
+	 * helper method trying to avoid duplicate code
+	 * @param operation the operation that is being performed
+	 */
+	private boolean retryOperation(String operation) {
+		System.out.println("Do you want to retry the operation of " + operation + "? (Yes/No)");
+		String answer = in.nextLine().trim().toLowerCase();
+		return answer.equals("yes");
+	}
 
 
 	public static void main(String[] args) {
