@@ -209,11 +209,11 @@ public class DataManager {
  	 */
  	 public String deleteFund(String fundId) {
  		if (fundId == null) {
- 		    throw new IllegalStateException("The ID for fund is null");
+ 		    throw new IllegalArgumentException("The ID for fund is null");
  		}
 
  		Map<String, Object> map = new HashMap<>();
- 		map.put("id", map);
+ 		map.put("id", fundId);
 
  		if (client == null) {
  		    throw new IllegalStateException("WebClient is null");
