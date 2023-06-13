@@ -201,7 +201,7 @@ public class UserInterface {
 						System.out.println("Deletion Succeed!");
 						org.getFunds().remove(fundNumber - 1);
 					}
-				} catch (IllegalStateException e) {
+				} catch (Exception e) {
 					System.out.println("Error: " + e.getMessage());
 					if (retryOperation("deleteFund")) {
 						displayFund(fundNumber);
