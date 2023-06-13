@@ -203,48 +203,6 @@ public class DataManager {
 		} else return null;
 	}
 	
-	/**
-	 * This method delete a new fund in the database using the /deleteFund endpoint in the API
-         * @return fund ID if successful; null if unsuccessful
-	 */
-	 public String deleteFund(String fundId) {
-		if (fundId == null) {
-		    throw new IllegalStateException("The ID for fund is null");
-		}
-
-		Map<String, Object> map = new HashMap<>();
-		map.put("id", map);
-
-		if (client == null) {
-		    throw new IllegalStateException("WebClient is null");
-
-		}
-		String response = client.makeRequest("/deleteFund", map);
-		if (response == null) {
-		    throw new IllegalStateException("WebClient returns null");
-		}
-
-		JSONParser parser = new JSONParser();
-		JSONObject json = null;
-		try {
-		    json = (JSONObject) parser.parse(response);
-		} catch (Exception e) {
-		    throw new IllegalStateException("WebClient returns malformed JSON");
-		}
-
-		String status = (String) json.get("status");
-
-		if (status == null) {
-		    throw new IllegalStateException("WebClient returns missing status");
-		}
-
-		if (status.equals("error")) {
-		    throw new IllegalStateException("Server error.");
-		} else if (status.equals("success")) {
-		    return fundId;
-		} else {
-		    return null;
-		}   
-	   }
+	
 
 }
