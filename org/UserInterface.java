@@ -97,7 +97,7 @@ public class UserInterface {
 			Fund fund = dataManager.createFund(org.getId(), name, description, target);
 			org.getFunds().add(fund);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("Error: " + e.getMessage());
 			System.out.println("Do you want to retry the operation of creatfund? (Yes/No)");
 			String answer = in.nextLine().trim().toLowerCase();
 			if (answer.equals("yes")) {
@@ -128,7 +128,7 @@ public class UserInterface {
 		System.out.println("Press 1 for showing individual donation(s), 2 for showing donations aggregated by Contributor, 3 for deleting this fund.");
 		int choice = Integer.parseInt(in.nextLine());
 		
-		if(choice  == 1) {
+		if (choice  == 1) {
 			for (Donation donation : donations) {
 				if(donation == null) {
 					continue;
@@ -144,33 +144,30 @@ public class UserInterface {
 			    System.out.print("Total donation amount: $"+totalDonation+"(" + percentage + " of target)." + "\r\n");
 			    totalDonation = 0;
 			}
-	       }else if(choice  == 2) {
-		  
-		  for (Donation donation : donations) {
-				
+		} else if (choice  == 2) {
+
+			for (Donation donation : donations) {
+
 				if(donation == null) {
 					continue;
 				}
-				
-				if(!donationMap.containsKey(donation.getContributorName())) {
+
+				if (!donationMap.containsKey(donation.getContributorName())) {
 					ArrayList<Integer> detail = new ArrayList<>();
 					detail.add(1);
 					detail.add((int)donation.getAmount());
-					
+
 					donationMap.put(donation.getContributorName(), detail);
-					
-				}else {
+
+				} else {
 					int times = donationMap.get(donation.getContributorName()).get(0);
 					int amount = donationMap.get(donation.getContributorName()).get(1);
 					donationMap.get(donation.getContributorName()).set(0,times = times + 1);
 					donationMap.get(donation.getContributorName()).set(1, amount + (int)donation.getAmount());
-				
 				}
-				
-				
+
+
 			}
-		  
-		  
 			for(Map.Entry<String, ArrayList<Integer>> donationSet : donationMap.entrySet()) {
 				pq.add(donationSet);
 //				System.out.println(donationSet.getKey());
@@ -178,8 +175,6 @@ public class UserInterface {
 //				System.out.println(donationSet.getValue().get(1));
 //				
 			}
-			
-			
 			while(!pq.isEmpty()) {
 				Map.Entry<String, ArrayList<Integer>> donation  = pq.poll();
 				String Contributor = donation.getKey();
@@ -191,11 +186,11 @@ public class UserInterface {
 //				System.out.println(pq.poll().getValue().get(1));
 			}
 
-		} else if(choice == 3) {
+		} else if (choice == 3) {
 		    System.out.println("You will delete the fund : " + fund.getName() + "\".");
-		    System.out.println("Enter \"I CONFIRM\" in the exact format in order to proceed (without quotation marks)");
+		    System.out.println("Enter \"I CONFIRM\" in the exact format in order to proceed (without quotation marks) or Enter anything else to abort.");
 		    String res = in.nextLine();
-		    if(res.equals("I CONFIRM")) {
+		    if (res.equals("I CONFIRM")) {
 		        String fundId;
 		        try {
                     fundId = dataManager.deleteFund(fund.getId());
@@ -207,24 +202,20 @@ public class UserInterface {
                     }
                 } catch (IllegalStateException e) {
                     System.out.println("Error: " + e.getMessage());
-                    return;
+					System.out.println("Do you want to retry the operation of deleteFund? (Yes/No)");
+					String answer = in.nextLine().trim().toLowerCase();
+					if (answer.equals("yes")) {
+						displayFund(fundNumber);
+					}
                 }
-		        
 		    } else {
 		        System.out.println("You have aborted the deletion request.");
 		        System.out.println("If you indeed intend to delete this fund, please try again by entering \"I CONFIRM\".");
 		    }
-		    
 		}
-		
-		
-		
-		
+
 		System.out.println("Press the Enter key to go back to the listing of funds");
 		in.nextLine();
-		
-		
-		
 	}
 	
 	public static void main(String[] args) {
@@ -253,7 +244,7 @@ public class UserInterface {
 				} else if (e instanceof IllegalStateException) {
 					System.out.println("an error occurs in communicating with the server");
 				}
-				System.out.println(e.getMessage());
+				System.out.println("Error: " + e.getMessage());
 				System.out.println("Do you want to retry the operation of login? (Yes/No)");
 				String answer = in.nextLine().trim().toLowerCase();
 				if (answer.equals("yes")) {
