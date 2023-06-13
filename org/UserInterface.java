@@ -2,8 +2,6 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import java.text.NumberFormat;
-import java.util.List;
-import java.util.Scanner;
 
 public class UserInterface {
 	
@@ -11,7 +9,7 @@ public class UserInterface {
 	private DataManager dataManager;
 	private Organization org;
 	private Scanner in = new Scanner(System.in);
-	
+	private Map<Integer, HashMap<String, ArrayList<Integer>>>cacheMap = new HashMap<>();
 	public UserInterface(DataManager dataManager, Organization org) {
 		this.dataManager = dataManager;
 		this.org = org;
@@ -34,6 +32,7 @@ public class UserInterface {
 			}
 
 			System.out.println("Enter 0 to create a new fund or Enter -1 to logout:");
+			System.out.println("Enter -2 to see all the contributors for this organization:");
 
 			int option = 0;
 			boolean isValidOption = false;
@@ -54,7 +53,9 @@ public class UserInterface {
 				createFund();
 			} else if (option >= 1 && option <= org.getFunds().size()) {
 				displayFund(option);
-			} else {
+			} else if(option == -2) {
+				allContributors();
+			}else {
 				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
 		}
@@ -108,10 +109,7 @@ public class UserInterface {
 	
 	public void displayFund(int fundNumber) {
 		
-		Map<String, ArrayList<Integer>> donationMap = new HashMap<>();
-		Map<Donation, Integer> donationMapTimes = new HashMap<>();
-		PriorityQueue<Map.Entry<String, ArrayList<Integer>>> pq = new PriorityQueue<>((a, b) ->
-		b.getValue().get(1) - a.getValue().get(1));
+		
 		Fund fund = org.getFunds().get(fundNumber - 1);
 		
 		
@@ -128,7 +126,7 @@ public class UserInterface {
 		System.out.println("Press 1 for showing individual donation(s), 2 for showing donations aggregated by Contributor, 3 for deleting this fund.");
 		int choice = Integer.parseInt(in.nextLine());
 		
-		if (choice  == 1) {
+		if(choice  == 1) {
 			for (Donation donation : donations) {
 				if(donation == null) {
 					continue;
@@ -144,49 +142,73 @@ public class UserInterface {
 			    System.out.print("Total donation amount: $"+totalDonation+"(" + percentage + " of target)." + "\r\n");
 			    totalDonation = 0;
 			}
-		} else if (choice  == 2) {
+			
+	   }else if(choice  == 2) {
+		   
+		  Map<String, ArrayList<Integer>> donationMap = new HashMap<>();
+		  PriorityQueue<Map.Entry<String, ArrayList<Integer>>> pq = new PriorityQueue<>((a, b) ->
+			b.getValue().get(1) - a.getValue().get(1));
+		  
+		  if(cacheMap.containsKey(fundNumber)) {    //cache it already
+			  
+			  for(Map.Entry<String, ArrayList<Integer>> donationSet : cacheMap.get(fundNumber).entrySet()) {
+					pq.add(donationSet);					
+				}
+				
+				
+				while(!pq.isEmpty()) {
+					Map.Entry<String, ArrayList<Integer>> donation  = pq.poll();
+					String Contributor = donation.getKey();
+					long times = donation.getValue().get(0);
+					long totalAmount = donation.getValue().get(1);
+					System.out.println(Contributor + ", " + times + " donations, " + "$" + totalAmount + " total");
 
-			for (Donation donation : donations) {
-
+				}
+		  }
+		  
+		  else {
+			  
+		  for (Donation donation : donations) {
+			  
 				if(donation == null) {
 					continue;
 				}
-
-				if (!donationMap.containsKey(donation.getContributorName())) {
+				
+				if(!donationMap.containsKey(donation.getContributorName())) {
 					ArrayList<Integer> detail = new ArrayList<>();
 					detail.add(1);
 					detail.add((int)donation.getAmount());
-
+					
 					donationMap.put(donation.getContributorName(), detail);
-
-				} else {
+					
+				}else {
 					int times = donationMap.get(donation.getContributorName()).get(0);
 					int amount = donationMap.get(donation.getContributorName()).get(1);
 					donationMap.get(donation.getContributorName()).set(0,times = times + 1);
 					donationMap.get(donation.getContributorName()).set(1, amount + (int)donation.getAmount());
+				
 				}
-
-
+				
+				
 			}
+		  	cacheMap.put(fundNumber, (HashMap<String, ArrayList<Integer>>) donationMap);
+		  
 			for(Map.Entry<String, ArrayList<Integer>> donationSet : donationMap.entrySet()) {
 				pq.add(donationSet);
-//				System.out.println(donationSet.getKey());
-//				System.out.println(donationSet.getValue().get(0));
-//				System.out.println(donationSet.getValue().get(1));
-//				
+			
 			}
+			
+			
 			while(!pq.isEmpty()) {
 				Map.Entry<String, ArrayList<Integer>> donation  = pq.poll();
 				String Contributor = donation.getKey();
 				long times = donation.getValue().get(0);
 				long totalAmount = donation.getValue().get(1);
 				System.out.println(Contributor + ", " + times + " donations, " + "$" + totalAmount + " total");
-//				System.out.println(pq.poll().getKey());
-//				System.out.println(pq.poll().getValue().get(0));
-//				System.out.println(pq.poll().getValue().get(1));
 			}
 
-		} else if (choice == 3) {
+		 }
+	   } else if (choice == 3) {
 		    System.out.println("You will delete the fund : " + fund.getName() + "\".");
 		    System.out.println("Enter \"I CONFIRM\" in the exact format in order to proceed (without quotation marks) or Enter anything else to abort.");
 		    String res = in.nextLine();
@@ -213,11 +235,72 @@ public class UserInterface {
 		        System.out.println("If you indeed intend to delete this fund, please try again by entering \"I CONFIRM\".");
 		    }
 		}
+	   }
+		
+		
+		
+		
+		System.out.println("Press the Enter key to go back to the listing of funds");
+		in.nextLine();
+		
+		
+		
+	}
+	
+    public void allContributors() {
+		Map<String, ArrayList> contributorMap;
+		PriorityQueue<Map.Entry<String, ArrayList>> pq = new PriorityQueue<>(new EntryComparator());
+		for (Fund f : org.getFunds()) {
+			List<Donation> getDonations = f.getDonations();
+			String fundName = f.getName();
+			contributorMap = new HashMap<>();
+			int i = 2;
+			for(Donation d : getDonations) {
+				
+				if(!contributorMap.containsKey(d.getContributorName())) {
+					contributorMap.put(d.getContributorName(), new ArrayList<>(Arrays.asList(fundName,
+							d.getAmount(),d.getDate(), d.totalday())));
+					
+				}else {
+					String key  = d.getContributorName() + " "+ i + "th time";
+					contributorMap.put(key, new ArrayList<>(Arrays.asList(fundName,
+							d.getAmount(),d.getDate(), d.totalday())));
+					i = i + 1;
+				}
+				
+			
+			}
+
+			pq.addAll(contributorMap.entrySet());
+		}
+		
+		while (!pq.isEmpty()) {
+            Map.Entry<String, ArrayList> entry = pq.poll();
+            System.out.println("Contributor: "+entry.getKey() 
+            + " donated " + "$" + entry.getValue().get(1)+ " on " + entry.getValue().get(2)+ " for Fund "
+            +entry.getValue().get(0));
+        }
 
 		System.out.println("Press the Enter key to go back to the listing of funds");
 		in.nextLine();
 	}
 	
+	static class EntryComparator implements Comparator<Map.Entry<String, ArrayList>> {
+        @Override
+        public int compare(Map.Entry<String, ArrayList> entry1, Map.Entry<String, ArrayList> entry2) {
+            int totalDays1 = (int) entry1.getValue().get(3);
+            int totalDays2 = (int) entry2.getValue().get(3);
+            if (totalDays1 != totalDays2) {
+                return totalDays2 - totalDays1;
+            } else {
+                return entry1.getKey().compareTo(entry2.getKey());
+            }
+        }
+    }
+
+
+
+
 	public static void main(String[] args) {
 		
 		DataManager ds = new DataManager(new WebClient("localhost", 3001));

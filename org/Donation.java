@@ -1,5 +1,6 @@
 import java.util.Map;
 import java.util.HashMap;
+import java.time.LocalDate;
 
 public class Donation {
 	
@@ -7,6 +8,7 @@ public class Donation {
 	private String contributorName;
 	private long amount;
 	private String date;
+	
 	
 	public Donation(String fundId, String contributorName, long amount, String date) {
 		this.fundId = fundId;
@@ -40,6 +42,27 @@ public class Donation {
 		return newDate;
 	}
 	
+	public int totalday() {
+		String years = date.substring(0,4);
+		String days = date.substring(8,10);
+		String months = date.substring(5,7);
+		int year = Integer.valueOf(years);
+		int month = Integer.valueOf(months);
+		int day = Integer.valueOf(days);
+		int totalday = 0;
+		if(month == 1||month == 3|| month == 5 || month == 7 ||
+		           month == 8 || month == 10 || month == 12) {
+			totalday = year*365 + month * 31 + day;
+		}else if(month == 2 && year % 4 == 0) {
+			totalday = year*365 + month * 28 + day;
+			
+		}else if(month == 2 && year % 4 != 0) {
+			totalday = year*365 + month * 29 + day;
+		}else {
+			totalday = year*365 + month * 30 + day;
+		}
+		return totalday;
+	}
 	
 	public String dataTransfer(String month){
 		Map<String, String> monthMap = new HashMap<>();
