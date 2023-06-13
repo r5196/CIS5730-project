@@ -125,7 +125,7 @@ public class UserInterface {
 		System.out.println("Number of donations: " + donations.size());
 		long totalDonation = 0;
 		
-		System.out.println("Press 1 for Individual Donation Displays, 2 for Aggregate Donation Display");
+		System.out.println("Press 1 for showing individual donation(s), 2 for showing donations aggregated by Contributor, 3 for deleting this fund.");
 		int choice = Integer.parseInt(in.nextLine());
 		
 		if(choice  == 1) {
@@ -144,7 +144,7 @@ public class UserInterface {
 			    System.out.print("Total donation amount: $"+totalDonation+"(" + percentage + " of target)." + "\r\n");
 			    totalDonation = 0;
 			}
-	   }else if(choice  == 2) {
+	       }else if(choice  == 2) {
 		  
 		  for (Donation donation : donations) {
 				
@@ -191,6 +191,30 @@ public class UserInterface {
 //				System.out.println(pq.poll().getValue().get(1));
 			}
 
+		} else if(choice == 3) {
+		    System.out.println("You will delete the fund : " + fund.getName() + "\".");
+		    System.out.println("Enter \"I CONFIRM\" in the exact format in order to proceed (without quotation marks)");
+		    String res = in.nextLine();
+		    if(res.equals("I CONFIRM")) {
+		        String fundId;
+		        try {
+                    fundId = dataManager.deleteFund(fund.getId());
+                    if (fundId == null) {
+                        System.out.println("Deletion Failed! We cannot retrieve the fund ID.");
+                    } else {
+                        System.out.println("Deletion Succeed!");
+                        org.getFunds().remove(fundNumber - 1);
+                    }
+                } catch (IllegalStateException e) {
+                    System.out.println("Error: " + e.getMessage());
+                    return;
+                }
+		        
+		    } else {
+		        System.out.println("You have aborted the deletion request.");
+		        System.out.println("If you indeed intend to delete this fund, please try again by entering \"I CONFIRM\".");
+		    }
+		    
 		}
 		
 		
