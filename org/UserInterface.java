@@ -4,8 +4,7 @@ import java.util.*;
 import java.text.NumberFormat;
 
 public class UserInterface {
-	
-	
+
 	private DataManager dataManager;
 	private Organization org;
 	private Scanner in = new Scanner(System.in);
@@ -285,42 +284,90 @@ public class UserInterface {
 		Scanner in = new Scanner(System.in);
 
 		while (true) {
-			System.out.print("Enter your login or type 'exit' to quit: ");
-			String login = in.nextLine().trim();
-			if (login.equalsIgnoreCase("exit")) {
-				break;
+			System.out.print("Enter 1 to login or Enter 2 to create a new organization: or Enter 'exit' to quit: ");
+			String choice = in.nextLine().trim();
+
+			if (choice.equals("1")) {
+				while (true) {
+					System.out.print("Enter your login:");
+					String login = in.nextLine().trim();
+					System.out.print("Enter your password: ");
+					String password = in.nextLine().trim();
+
+					Organization org = null;
+					try {
+						org = ds.attemptLogin(login, password);
+						if (org == null) {
+							System.out.println("Login failed. Username/Password combination is incorrect");
+							System.out.println("Do you want to retry the operation of login? (Yes/No)");
+							String answer = in.nextLine().trim().toLowerCase();
+							if (!answer.equals("yes")) {
+								break;
+							}
+						} else {
+							UserInterface ui = new UserInterface(ds, org);
+							ui.start();
+						}
+					} catch (Exception e) {
+						if (e instanceof IllegalArgumentException) {
+							System.out.println("Invalid Argument");
+						} else if (e instanceof IllegalStateException) {
+							System.out.println("an error occurs in communicating with the server");
+						}
+						System.out.println("Error: " + e.getMessage());
+						System.out.println("Do you want to retry the operation of login? (Yes/No)");
+						String answer = in.nextLine().trim().toLowerCase();
+						if (!answer.equals("yes")) {
+							break;
+						}
+					}
+				}
 			}
-			System.out.print("Enter your password or type 'exit' to quit: ");
-			String password = in.nextLine().trim();
-			if (login.equalsIgnoreCase("exit")) {
+
+			if (choice.equals("2")) {
+				while (true) {
+					System.out.print("Enter the login of the organization: ");
+					String newLogin = in.nextLine().trim();
+					System.out.print("Enter the password of the organization: ");
+					String newPassword = in.nextLine().trim();
+					System.out.print("Enter the name of the organization: ");
+					String newName = in.nextLine().trim();
+					System.out.print("Enter the description of the organization: ");
+					String newDescription = in.nextLine().trim();
+
+					Organization org = null;
+					try {
+						org = ds.createOrg(newLogin, newPassword, newName, newDescription);
+						System.out.println("Organization created successfully");
+
+						if (org == null) {
+							System.out.println("Organization creation failed.");
+						} else {
+							UserInterface ui = new UserInterface(ds, org);
+							ui.start();
+						}
+					} catch (Exception e) {
+						System.out.println("Error: " + e.getMessage());
+						System.out.println("Do you want to retry the operation of creating a new organization? (Yes/No)");
+						String answer = in.nextLine().trim().toLowerCase();
+						if (!answer.equals("yes")) {
+							break;
+						}
+					}
+				}
+			}
+
+			if (choice.equals("exit")) {
 				break;
 			}
 
-			Organization org = null;
-			try {
-				org = ds.attemptLogin(login, password);
-			} catch (Exception e) {
-				if (e instanceof IllegalArgumentException) {
-					System.out.println("Invalid Argument");
-				} else if (e instanceof IllegalStateException) {
-					System.out.println("an error occurs in communicating with the server");
-				}
-				System.out.println("Error: " + e.getMessage());
-				System.out.println("Do you want to retry the operation of login? (Yes/No)");
-				String answer = in.nextLine().trim().toLowerCase();
-				if (answer.equals("yes")) {
-					main(args);
-				}
-			}
-
-			if (org == null) {
-				System.out.println("Login failed. Username/Password combination is incorrect");
-			} else {
-				UserInterface ui = new UserInterface(ds, org);
-				ui.start();
+			if (!choice.equals("1") && !choice.equals("2") && !choice.equals("exit")) {
+				System.out.println("Invalid choice. Please try again.");
 			}
 		}
 		in.close();
 	}
+
+
 
 }

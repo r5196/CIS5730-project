@@ -144,6 +144,69 @@ public class DataManager {
 	}
 
 	/**
+	 * This is implemented in phase 3.
+	 * This method creates a new organization in the database using the /createOrg endpoint in the API
+	 * @return a new Organization object if successful; null if unsuccessful
+	 */
+	public Organization createOrg(String login, String password, String name, String description) {
+		if (login == null || login.isEmpty()) {
+			// System.out.println("Organization login is invalid.");
+			throw new IllegalArgumentException("Organization login is invalid.");
+			// return null;
+		}
+		if (password == null || password.isEmpty()) {
+			// System.out.println("Organization password is invalid.");
+			throw new IllegalArgumentException("Organization password is invalid.");
+			// return null;
+		}
+		if (name == null || name.isEmpty()) {
+			// System.out.println("Organization name is invalid.");
+			throw new IllegalArgumentException("Organization name is invalid.");
+			// return null;
+		}
+		if (description == null || description.isEmpty()) {
+			// System.out.println("Organization description is invalid.");
+			throw new IllegalArgumentException("Organization description is invalid.");
+			// return null;
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("name", name);
+		map.put("description", description);
+		map.put("login", login);
+		map.put("password", password);
+
+		if (client == null) {
+			throw new IllegalStateException("webClient is null");
+		}
+		String response = client.makeRequest("/createOrg", map);
+		if (response == null) {
+			throw new IllegalStateException("webClient returns null");
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
+		try {
+			json = (JSONObject) parser.parse(response);
+		} catch (Exception e) {
+			throw new IllegalStateException("webClient returns invalid JSON");
+		}
+		String status = (String) json.get("status");
+		if (status == null) {
+			throw new IllegalStateException("webClient returns unknown status");
+		}
+
+		if (status.equals("success")) {
+			JSONObject data = (JSONObject) json.get("data");
+			String orgId = (String) data.get("_id");
+			Organization org = new Organization(orgId, name, description);
+			return org;
+		} else if (status.equals("error")) {
+			throw new IllegalStateException("webClient returns error");
+		} else return null;
+	}
+
+	/**
 	 * This method creates a new fund in the database using the /createFund endpoint in the API
 	 * @return a new Fund object if successful; null if unsuccessful
 	 */
@@ -244,8 +307,8 @@ public class DataManager {
  		    return fundId;
  		} else {
  		    return null;
- 		}   
- 	   }
+ 		}
+	  }
 	
 	
 
