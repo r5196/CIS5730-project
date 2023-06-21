@@ -4,7 +4,7 @@ The Additional Tasks that you would like graded for this phase (**3.1-3.4**).
 
 ## Q2
 For each task you completed in this phase, a brief description of the changes you made to the provided code, e.g. the names of any classes or methods that were changed, new methods that were created, etc.
-1. **Task 3.1 changes get contributor name method in data manager class and adds private field and initialize it in constructor. The task also requirs changes to orignial tests in phase 1. In the method, if the contributor id has been looked up, directly return its name, if it has not been looked up, before return its name, add the id and its name to the cache.**
+1. **Task 3.1 adds createOrg() method in data manager class. The task also changes main() method in userinterface class. The task finally adds /creatOrg endpoint in api.js Task 3.1 checks if any field is blank in createOrg() method in data manager classs. In the case, the method will throw exception and indicate the field is invalid. The task checks if the org login already exists using /createOrg endpoint in api.js.**
 2. **Task 3.2 changes each method in data manager file to pass robustness test cases. The task also requirs changes to orignial tests in phase 1. Finally the userinterface is changed to make UI display meaningful error message. After message, the user has the option of retrying the operation. This involes changes of each operation in userinterface class.**
 
 
