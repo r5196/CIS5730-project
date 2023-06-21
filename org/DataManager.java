@@ -202,7 +202,9 @@ public class DataManager {
 			Organization org = new Organization(orgId, name, description);
 			return org;
 		} else if (status.equals("error")) {
-			throw new IllegalStateException("webClient returns error");
+			JSONObject data = (JSONObject) json.get("data");
+			String message = (String) data.get("message");
+			throw new IllegalStateException("webClient returns error: " + message);
 		} else return null;
 	}
 

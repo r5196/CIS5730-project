@@ -235,7 +235,7 @@ public class DataManagerCreateOrgTest {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
-                return "{\"status\":\"error\",\"data\":{\"_id\":\"123\",\"login\":\"login1\",\"password\":\"password1\",\"name\":\"new org\",\"description\":\"this is the new org\",\"funds\":[],\"__v\":0}}";
+                return "{\"status\":\"error\",\"data\":{\"message\":\"Cannot find document\"}}";
             }
         });
         dm.createOrg("login1", "password1", "new org", "this is the new org");
