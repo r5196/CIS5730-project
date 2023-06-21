@@ -316,17 +316,27 @@ app.use('/createOrg', (req, res) => {
 		funds: []
 	    });
 
-	org.save( (err) => {
-		if (err) {
-		    res.json({'status' : 'error', 'data' : err});
-		}
-		else {
-		    // console.log(org);
-		    res.json({'status' : 'success', 'data' : org});
-		}
-	    });
-
+	// Check if login already exists in the database
+	Organization.findOne({login: req.query.login}, (err, result) => {
+	    if (err) {
+	        res.json({'status': 'error', 'data' : err});
+	    }
+	    else if (result) {
+	        res.json({'status': 'error', 'data' : {'message': 'login already exists'}});
+	    }
+	    else {
+	        org.save( (err) => {
+                if (err) {
+                    res.json({'status' : 'error', 'data' : err});
+                }
+                else {
+                    // console.log(org);
+                    res.json({'status' : 'success', 'data' : org});
+                }
+            });
+	    }
     });
+});
 
 
 /*
