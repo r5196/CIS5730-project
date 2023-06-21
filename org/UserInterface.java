@@ -7,7 +7,7 @@ public class UserInterface {
 
 	private DataManager dataManager;
 	private Organization org;
-	private static Scanner in = new Scanner(System.in);
+	private Scanner in = new Scanner(System.in);
 	private Map<Integer, HashMap<String, ArrayList<Integer>>>cacheMap = new HashMap<>();
 	public UserInterface(DataManager dataManager, Organization org) {
 		this.dataManager = dataManager;
@@ -271,7 +271,7 @@ public class UserInterface {
 	 * helper method trying to avoid duplicate code
 	 * @param operation the operation that is being performed
 	 */
-	private static boolean retryOperation(String operation) {
+	private boolean retryOperation(String operation) {
 		System.out.println("Do you want to retry the operation of " + operation + "? (Yes/No)");
 		String answer = in.nextLine().trim().toLowerCase();
 		return answer.equals("yes");
@@ -281,7 +281,7 @@ public class UserInterface {
 	public static void main(String[] args) {
 		
 		DataManager ds = new DataManager(new WebClient("localhost", 3001));
-		// Scanner in = new Scanner(System.in);
+		Scanner in = new Scanner(System.in);
 
 		while (true) {
 			System.out.print("Enter 1 to login or Enter 2 to create a new organization: or Enter 'exit' to quit: ");
@@ -299,7 +299,9 @@ public class UserInterface {
 						org = ds.attemptLogin(login, password);
 						if (org == null) {
 							System.out.println("Login failed. Username/Password combination is incorrect");
-							if (!retryOperation("login")) {
+							System.out.println("Do you want to retry the operation of login? (Yes/No)");
+							String answer = in.nextLine().trim().toLowerCase();
+							if (!answer.equals("yes")) {
 								break;
 							}
 						} else {
@@ -313,7 +315,9 @@ public class UserInterface {
 							System.out.println("an error occurs in communicating with the server");
 						}
 						System.out.println("Error: " + e.getMessage());
-						if (!retryOperation("login")) {
+						System.out.println("Do you want to retry the operation of login? (Yes/No)");
+						String answer = in.nextLine().trim().toLowerCase();
+						if (!answer.equals("yes")) {
 							break;
 						}
 					}
@@ -344,7 +348,9 @@ public class UserInterface {
 						}
 					} catch (Exception e) {
 						System.out.println("Error: " + e.getMessage());
-						if (!retryOperation("creating a new organization")) {
+						System.out.println("Do you want to retry the operation of creating a new organization? (Yes/No)");
+						String answer = in.nextLine().trim().toLowerCase();
+						if (!answer.equals("yes")) {
 							break;
 						}
 					}
