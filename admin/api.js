@@ -47,7 +47,7 @@ app.use('/createFund', (req, res) => {
 		    res.json({ "status": "error", "data" : err});
 		}
 		else {
-		    //console.log(fund);
+		    // console.log(fund);
 
 		    /*
 		      In addition to updating the Fund collection, we also need to
@@ -302,6 +302,31 @@ app.use('/findFundNameById', (req, res) => {
 	    });
     });
 
+/*
+This is implemented in phase 3
+create new organization
+*/
+app.use('/createOrg', (req, res) => {
+
+	var org = new Organization({
+		login: req.query.login,
+		password: req.query.password,
+		name: req.query.name,
+		description: req.query.description,
+		funds: []
+	    });
+
+	org.save( (err) => {
+		if (err) {
+		    res.json({'status' : 'error', 'data' : err});
+		}
+		else {
+		    // console.log(org);
+		    res.json({'status' : 'success', 'data' : org});
+		}
+	    });
+
+    });
 
 
 /*
