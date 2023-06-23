@@ -32,6 +32,7 @@ public class UserInterface {
 
 			System.out.println("Enter 0 to create a new fund or Enter -1 to logout:");
 			System.out.println("Enter -2 to see all the contributors for this organization:");
+			// System.out.println("Enter -3 to change the password:");
 
 			int option = 0;
 			boolean isValidOption = false;
@@ -54,10 +55,49 @@ public class UserInterface {
 				displayFund(option);
 			} else if(option == -2) {
 				allContributors();
-			}else {
+			} else {
 				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
 		}
+	}
+
+	/**
+	 * This is implemented in phase 3
+	 * This method is used to change the password of the organization
+	 * @param password
+	 * @return true if the password is changed successfully, false otherwise
+	 */
+	public boolean changePassword(String password) {
+		System.out.println("Enter the current password:");
+		String currentPassword = in.nextLine().trim();
+		if (!currentPassword.equals(password)) {
+			System.out.println("The current password is incorrect.");
+			return false;
+		}
+		System.out.println("Enter the new password first time:");
+		String newPassword1 = in.nextLine();
+		System.out.println("Enter the new password second time:");
+		String newPassword2 = in.nextLine();
+		if(!newPassword1.equals(newPassword2)) {
+			System.out.println("The two new passwords are not the same. Please try again.");
+			return false;
+		}
+		try {
+			boolean r = dataManager.updateOrg(org.getId(), newPassword1);
+			if (r) {
+				System.out.println("The password has been changed successfully.");
+				return true;
+			} else {
+				System.out.println("The password has not been changed.");
+				return false;
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+			if (retryOperation("changePassword")) {
+				changePassword(password);
+			}
+		}
+		return false;
 	}
 	
 	public void createFund() {
@@ -306,6 +346,18 @@ public class UserInterface {
 							}
 						} else {
 							UserInterface ui = new UserInterface(ds, org);
+							System.out.println("You have logged in.");
+							while (true) {
+								System.out.println("Do you want to change your password? (Yes/No)");
+								String answer = in.nextLine().trim().toLowerCase();
+								if (answer.equals("yes")) {
+									if (ui.changePassword(password)) {
+										break;
+									}
+								} else {
+									break;
+								}
+							}
 							ui.start();
 						}
 					} catch (Exception e) {
@@ -344,6 +396,18 @@ public class UserInterface {
 							System.out.println("Organization creation failed.");
 						} else {
 							UserInterface ui = new UserInterface(ds, org);
+							while (true) {
+								System.out.println("You have logged in.");
+								System.out.println("Do you want to change your password? (Yes/No)");
+								String answer = in.nextLine().trim().toLowerCase();
+								if (answer.equals("yes")) {
+									if (ui.changePassword(newPassword)) {
+										break;
+									}
+								} else {
+									break;
+								}
+							}
 							ui.start();
 						}
 					} catch (Exception e) {
