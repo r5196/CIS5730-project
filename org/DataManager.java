@@ -207,6 +207,51 @@ public class DataManager {
 	}
 
 	/**
+	 * This is implemented in phase 3
+	 * This method changes the password of the current organization after login
+	 * @return true if suceessful; false if unsuccessgul
+	 */
+	public boolean updateOrg(String orgId, String newPassword) {
+		if (orgId == null || orgId.isEmpty()) {
+			throw new IllegalArgumentException("Organization ID is invalid.");
+		}
+		if (newPassword == null || newPassword.isEmpty()) {
+			throw new IllegalArgumentException("New password is invalid.");
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", orgId);
+		map.put("password", newPassword);
+
+		if (client == null) {
+			throw new IllegalStateException("webClient is null");
+		}
+		String response = client.makeRequest("/updateOrg", map);
+		if (response == null) {
+			throw new IllegalStateException("webClient returns null");
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
+		try {
+			json = (JSONObject) parser.parse(response);
+		} catch (Exception e) {
+			throw new IllegalStateException("webClient returns invalid JSON");
+		}
+		String status = (String) json.get("status");
+		if (status == null) {
+			throw new IllegalStateException("webClient returns unknown status");
+		}
+
+		if (status.equals("success")) {
+			return true;
+		} else if (status.equals("error")) {
+			throw new IllegalStateException("webClient returns error");
+		} else return false;
+
+	}
+
+	/**
 	 * This method creates a new fund in the database using the /createFund endpoint in the API
 	 * @return a new Fund object if successful; null if unsuccessful
 	 */
