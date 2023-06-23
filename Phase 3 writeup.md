@@ -4,8 +4,8 @@ The Additional Tasks that you would like graded for this phase (**3.1-3.4**).
 
 ## Q2
 For each task you completed in this phase, a brief description of the changes you made to the provided code, e.g. the names of any classes or methods that were changed, new methods that were created, etc.
-1. **Task 3.1 adds createOrg() method in data manager class. The task also changes main() method in userinterface class. The task finally adds /creatOrg endpoint in api.js Task 3.1 checks if any field is blank in createOrg() method in data manager classs. In the case, the method will throw exception and indicate the field is invalid. The task checks if the org login already exists using /createOrg endpoint in api.js.**
-2. **Task 3.2 changes each method in data manager file to pass robustness test cases. The task also requirs changes to orignial tests in phase 1. Finally the userinterface is changed to make UI display meaningful error message. After message, the user has the option of retrying the operation. This involes changes of each operation in userinterface class.**
+1. **Task 3.1 adds createOrg() method in data manager class. The task also changes main() method in userinterface class. The task finally adds /creatOrg endpoint in api.js. Task 3.1 checks if any field is blank in createOrg() method in data manager classs. In the case, the method will throw exception and indicate the field is invalid. The task checks if the org login already exists using /createOrg endpoint in api.js.**
+2. **Task 3.2 adds updateOrg method in data manager class. The task also changes main() method in user interface by adding change password method. Finally the task adds /updateOrg endpoint in api.js.**
 
 
 
@@ -42,6 +42,6 @@ Instructions on how to start each app, if you changed anything from the original
 
 ## Q5
 A brief but specific description of each team member’s contributions, including the task numbers that they worked on. Please do not simply write “all members contributed equally to all tasks” since we know that’s not really the case. 😁
-**Yao Jiang did tasks .
+**Yao Jiang did tasks 3.3.
 Renyu did tasks 3.1 and 3.2. 
-Yuqi Wang did tasks .**
+Yuqi Wang did tasks 3.4. All supports are in the github project as comments and linked pull requests in issues.**
