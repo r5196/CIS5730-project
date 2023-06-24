@@ -4,7 +4,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class DataManagerUpdateOrgTest {
+public class DataManagerUpdatePasswordByOrgTest {
 
     @Test
     public void testSuccessfulUpdate() {
@@ -19,7 +19,7 @@ public class DataManagerUpdateOrgTest {
 
         });
 
-        boolean result = dm.updateOrg("123", "password1");
+        boolean result = dm.updatePasswordByOrg("123", "password1");
         assertTrue(result);
     }
 
@@ -32,7 +32,7 @@ public class DataManagerUpdateOrgTest {
             }
         });
 
-        dm.updateOrg("123", "password1");
+        dm.updatePasswordByOrg("123", "password1");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class DataManagerUpdateOrgTest {
         });
 
 
-        boolean result = dm.updateOrg("123", "password1");
+        boolean result = dm.updatePasswordByOrg("123", "password1");
         assertFalse(result);
     }
 
@@ -67,7 +67,7 @@ public class DataManagerUpdateOrgTest {
         });
 
 
-        dm.updateOrg("123", "password1");
+        dm.updatePasswordByOrg("123", "password1");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -84,7 +84,7 @@ public class DataManagerUpdateOrgTest {
         });
 
         // id is null
-        dm.updateOrg(null, "password1");
+        dm.updatePasswordByOrg(null, "password1");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -101,7 +101,7 @@ public class DataManagerUpdateOrgTest {
         });
 
         // password is null
-        dm.updateOrg("123", null);
+        dm.updatePasswordByOrg("123", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,7 +118,7 @@ public class DataManagerUpdateOrgTest {
         });
 
         // id is empty
-        dm.updateOrg("", "password1");
+        dm.updatePasswordByOrg("", "password1");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -135,7 +135,7 @@ public class DataManagerUpdateOrgTest {
         });
 
         // password is empty
-        dm.updateOrg("login1", "");
+        dm.updatePasswordByOrg("login1", "");
 
     }
 
@@ -148,7 +148,7 @@ public class DataManagerUpdateOrgTest {
             }
         });
 
-        dm.updateOrg("login1", "password1");
+        dm.updatePasswordByOrg("login1", "password1");
     }
 
     // webClient returns error
@@ -160,7 +160,7 @@ public class DataManagerUpdateOrgTest {
                 return "{\"status\":\"error\",\"data\":{\"_id\":\"123\",\"login\":\"login1\",\"password\":\"password1\",\"name\":\"new org\",\"description\":\"this is the new org\",\"funds\":[],\"__v\":0}}";
             }
         });
-        dm.updateOrg("login1", "password1");
+        dm.updatePasswordByOrg("login1", "password1");
     }
 
     // webClient returns unknown status
@@ -172,7 +172,7 @@ public class DataManagerUpdateOrgTest {
                 return "{\"data\":{\"_id\":\"123\",\"login\":\"login1\",\"password\":\"password1\",\"name\":\"new org\",\"description\":\"this is the new org\",\"funds\":[],\"__v\":0}}";
             }
         });
-        dm.updateOrg("login1", "password1");
+        dm.updatePasswordByOrg("login1", "password1");
     }
 
     // webClient returns null
@@ -184,14 +184,14 @@ public class DataManagerUpdateOrgTest {
                 return null;
             }
         });
-        dm.updateOrg("login1", "password1");
+        dm.updatePasswordByOrg("login1", "password1");
     }
 
     // webClient is null
     @Test(expected = IllegalStateException.class)
     public void testNullWebClientCreation() {
         DataManager dm = new DataManager(null);
-        dm.updateOrg("login1", "password1");
+        dm.updatePasswordByOrg("login1", "password1");
     }
 
 }

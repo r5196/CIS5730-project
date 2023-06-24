@@ -344,7 +344,7 @@ app.use('/createOrg', (req, res) => {
 This is implemented in phase 3
 update the password of an organization
 */
-app.use('/updateOrg', (req, res) => {
+app.use('/updatePasswordByOrg', (req, res) => {
 
     // console.log(req);
 

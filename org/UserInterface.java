@@ -64,7 +64,7 @@ public class UserInterface {
 	/**
 	 * This is implemented in phase 3
 	 * This method is used to change the password of the organization
-	 * @param password
+	 * @param password the current password of the organization
 	 * @return true if the password is changed successfully, false otherwise
 	 */
 	public boolean changePassword(String password) {
@@ -83,7 +83,7 @@ public class UserInterface {
 			return false;
 		}
 		try {
-			boolean r = dataManager.updateOrg(org.getId(), newPassword1);
+			boolean r = dataManager.updatePasswordByOrg(org.getId(), newPassword1);
 			if (r) {
 				System.out.println("The password has been changed successfully.");
 				return true;
