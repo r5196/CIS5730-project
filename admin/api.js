@@ -316,8 +316,10 @@ app.use('/createOrg', (req, res) => {
 		funds: []
 	    });
 
+	var query = {"login" : req.query.login};
+
 	// Check if login already exists in the database
-	Organization.findOne({login: req.query.login}, (err, result) => {
+	Organization.findOne(query, (err, result) => {
 	    if (err) {
 	        res.json({'status': 'error', 'data' : err});
 	    }

@@ -356,6 +356,7 @@ public class UserInterface {
 								}
 							}
 							ui.start();
+							break;
 						}
 					} catch (Exception e) {
 						if (e instanceof IllegalArgumentException) {
@@ -406,6 +407,7 @@ public class UserInterface {
 								}
 							}
 							ui.start();
+							break;
 						}
 					} catch (Exception e) {
 						System.out.println("Error: " + e.getMessage());
