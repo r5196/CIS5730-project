@@ -10,6 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+
+
 public class DataManager {
 
 	private final WebClient client;
@@ -144,6 +146,116 @@ public class DataManager {
 	}
 
 	/**
+	 * This is implemented in phase 3.
+	 * This method creates a new organization in the database using the /createOrg endpoint in the API
+	 * @return a new Organization object if successful; null if unsuccessful
+	 */
+	public Organization createOrg(String login, String password, String name, String description) {
+		if (login == null || login.isEmpty()) {
+			// System.out.println("Organization login is invalid.");
+			throw new IllegalArgumentException("Organization login is invalid.");
+			// return null;
+		}
+		if (password == null || password.isEmpty()) {
+			// System.out.println("Organization password is invalid.");
+			throw new IllegalArgumentException("Organization password is invalid.");
+			// return null;
+		}
+		if (name == null || name.isEmpty()) {
+			// System.out.println("Organization name is invalid.");
+			throw new IllegalArgumentException("Organization name is invalid.");
+			// return null;
+		}
+		if (description == null || description.isEmpty()) {
+			// System.out.println("Organization description is invalid.");
+			throw new IllegalArgumentException("Organization description is invalid.");
+			// return null;
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("name", name);
+		map.put("description", description);
+		map.put("login", login);
+		map.put("password", password);
+
+		if (client == null) {
+			throw new IllegalStateException("webClient is null");
+		}
+		String response = client.makeRequest("/createOrg", map);
+		if (response == null) {
+			throw new IllegalStateException("webClient returns null");
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
+		try {
+			json = (JSONObject) parser.parse(response);
+		} catch (Exception e) {
+			throw new IllegalStateException("webClient returns invalid JSON");
+		}
+		String status = (String) json.get("status");
+		if (status == null) {
+			throw new IllegalStateException("webClient returns unknown status");
+		}
+
+		if (status.equals("success")) {
+			JSONObject data = (JSONObject) json.get("data");
+			String orgId = (String) data.get("_id");
+			Organization org = new Organization(orgId, name, description);
+			return org;
+		} else if (status.equals("error")) {
+			JSONObject data = (JSONObject) json.get("data");
+			String message = (String) data.get("message");
+			throw new IllegalStateException("webClient returns error: " + message);
+		} else return null;
+	}
+
+	/**
+	 * This is implemented in phase 3
+	 * This method changes the password of the current organization after login
+	 * @return true if suceessful; false if unsuccessgul
+	 */
+	public boolean updateOrg(String orgId, String newPassword) {
+		if (orgId == null || orgId.isEmpty()) {
+			throw new IllegalArgumentException("Organization ID is invalid.");
+		}
+		if (newPassword == null || newPassword.isEmpty()) {
+			throw new IllegalArgumentException("New password is invalid.");
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", orgId);
+		map.put("password", newPassword);
+
+		if (client == null) {
+			throw new IllegalStateException("webClient is null");
+		}
+		String response = client.makeRequest("/updateOrg", map);
+		if (response == null) {
+			throw new IllegalStateException("webClient returns null");
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
+		try {
+			json = (JSONObject) parser.parse(response);
+		} catch (Exception e) {
+			throw new IllegalStateException("webClient returns invalid JSON");
+		}
+		String status = (String) json.get("status");
+		if (status == null) {
+			throw new IllegalStateException("webClient returns unknown status");
+		}
+
+		if (status.equals("success")) {
+			return true;
+		} else if (status.equals("error")) {
+			throw new IllegalStateException("webClient returns error");
+		} else return false;
+
+	}
+
+	/**
 	 * This method creates a new fund in the database using the /createFund endpoint in the API
 	 * @return a new Fund object if successful; null if unsuccessful
 	 */
@@ -244,9 +356,72 @@ public class DataManager {
  		    return fundId;
  		} else {
  		    return null;
- 		}   
- 	   }
+ 		}
+	  }
 	
-	
+ 	/**
+  	 * This method make a new donation in the database using the /makeDonation endpoint in the API
+           * @return fund ID if successful; null if unsuccessful
+  	 */
+  	 public Donation makeDonation(String fundId, String contributorid, String amount) {
+  		if (fundId == null || fundId.isEmpty()) {
+  		    throw new IllegalArgumentException("Fund name is invalid.");
+  		}
+  		
+		if (contributorid == null || contributorid.isEmpty()) {
+			throw new IllegalArgumentException("Contributor ID is invalid.");
+		}
+		if (amount == null || amount.isEmpty()) {
+			throw new IllegalArgumentException("Amount is invalid.");
+		}
+		long parsedAmount;
+		try {
+	        parsedAmount = Long.parseLong(amount);
+	        if (parsedAmount < 0) {
+	            throw new IllegalArgumentException("Target amount is invalid. It should be a non-negative number.");
+	        }
+	    } catch (NumberFormatException e) {
+	        throw new IllegalArgumentException("Invalid amount. It should be a valid number.");
+	    }
+	    
+	    String name = getContributorName(contributorid);
+  		Map<String, Object> map = new HashMap<>();
+  		map.put("fund", fundId);
+  		map.put("contributor", contributorid);
+  		map.put("amount", parsedAmount);
+
+  		if (client == null) {
+  		    throw new IllegalStateException("WebClient is null");
+
+  		}
+  		String response = client.makeRequest("/makeDonation", map);
+  		if (response == null) {
+  		    throw new IllegalStateException("WebClient returns null");
+  		}
+
+  		JSONParser parser = new JSONParser();
+  		JSONObject json = null;
+  		try {
+  		    json = (JSONObject) parser.parse(response);
+  		} catch (Exception e) {
+  		    throw new IllegalStateException("WebClient returns malformed JSON");
+  		}
+
+  		String status = (String) json.get("status");
+
+  		if (status == null) {
+  		    throw new IllegalStateException("WebClient returns missing status");
+  		}
+
+  		if (status.equals("error")) {
+  		    throw new IllegalStateException("Server error.");
+  		}else if(status.equals("success")) {
+			JSONObject donation = (JSONObject) json.get("data");
+			String date =   (String) donation.get("date");
+			return new Donation(fundId, name, parsedAmount, date);
+  		} else {
+  		    return null;
+  		}
+ 	  }
 
 }
