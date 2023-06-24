@@ -93,9 +93,6 @@ public class UserInterface {
 			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
-			if (retryOperation("changePassword")) {
-				changePassword(password);
-			}
 		}
 		return false;
 	}
