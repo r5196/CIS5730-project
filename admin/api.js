@@ -366,6 +366,56 @@ app.use('/updatePasswordByOrg', (req, res) => {
 
     });
 
+/*
+This is implemented in phase 3
+update the org account
+*/
+app.use('/updateOrgAccount', (req, res) => {
+
+	var filter = { "_id": req.query._id };
+
+	var update = { "name": req.query.name, "description": req.query.description };
+
+	var action = { "$set": update };
+
+	Organization.findOneAndUpdate(filter, action, { new: true }, (err, result) => {
+		if (err) {
+			res.json({ "status": "error", "data": err });
+		}
+		else if (!result) {
+			res.json({ "status": "not found" });
+		}
+		else {
+			res.json({ "status": "success" });
+		}
+	});
+
+});
+
+/*
+This is implemented in phase 3
+verify the org password
+*/
+app.use('/verifyOrgPassword', (req, res) => {
+
+	var query = { "_id": req.query._id, "password": req.query.password };
+
+	Organization.findOne(query, (err, result) => {
+		if (err) {
+			res.json({ "status": "error", "data": err });
+		}
+		else if (!result) {
+			res.json({ "status": "not found" });
+		}
+		else {
+			//console.log(result);
+			res.json({ "status": "success" });
+		}
+	});
+
+
+});
+
 
 /*
 Return information about all organizations, so that user can choose one to contribute to.
