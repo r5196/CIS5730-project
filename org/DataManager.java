@@ -10,6 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+
+
 public class DataManager {
 
 	private final WebClient client;
@@ -355,8 +357,72 @@ public class DataManager {
  		} else {
  		    return null;
  		}
-	  }
+	}
 	
 	
+ 	/**
+  	 * This method make a new donation in the database using the /makeDonation endpoint in the API
+           * @return fund ID if successful; null if unsuccessful
+  	 */
+  	 public Donation makeDonation(String fundId, String contributorid, String amount) {
+  		if (fundId == null || fundId.isEmpty()) {
+  		    throw new IllegalArgumentException("Fund name is invalid.");
+  		}
+  		
+		if (contributorid == null || contributorid.isEmpty()) {
+			throw new IllegalArgumentException("Contributor ID is invalid.");
+		}
+		if (amount == null || amount.isEmpty()) {
+			throw new IllegalArgumentException("Amount is invalid.");
+		}
+		long parsedAmount;
+		try {
+	        parsedAmount = Long.parseLong(amount);
+	        if (parsedAmount < 0) {
+	            throw new IllegalArgumentException("Target amount is invalid. It should be a non-negative number.");
+	        }
+	    } catch (NumberFormatException e) {
+	        throw new IllegalArgumentException("Invalid amount. It should be a valid number.");
+	    }
+	    
+	    String name = getContributorName(contributorid);
+  		Map<String, Object> map = new HashMap<>();
+  		map.put("fund", fundId);
+  		map.put("contributor", contributorid);
+  		map.put("amount", parsedAmount);
+
+  		if (client == null) {
+  		    throw new IllegalStateException("WebClient is null");
+
+  		}
+  		String response = client.makeRequest("/makeDonation", map);
+  		if (response == null) {
+  		    throw new IllegalStateException("WebClient returns null");
+  		}
+
+  		JSONParser parser = new JSONParser();
+  		JSONObject json = null;
+  		try {
+  		    json = (JSONObject) parser.parse(response);
+  		} catch (Exception e) {
+  		    throw new IllegalStateException("WebClient returns malformed JSON");
+  		}
+
+  		String status = (String) json.get("status");
+
+  		if (status == null) {
+  		    throw new IllegalStateException("WebClient returns missing status");
+  		}
+
+  		if (status.equals("error")) {
+  		    throw new IllegalStateException("Server error.");
+  		}else if(status.equals("success")) {
+			JSONObject donation = (JSONObject) json.get("data");
+			String date =   (String) donation.get("date");
+			return new Donation(fundId, name, parsedAmount, date);
+  		} else {
+  		    return null;
+  		}
+ 	  }
 
 }

@@ -1,6 +1,7 @@
 import java.text.NumberFormat;
 import java.util.*;
 
+
 import java.text.NumberFormat;
 
 public class UserInterface {
@@ -32,7 +33,7 @@ public class UserInterface {
 
 			System.out.println("Enter 0 to create a new fund or Enter -1 to logout:");
 			System.out.println("Enter -2 to see all the contributors for this organization:");
-			// System.out.println("Enter -3 to change the password:");
+			System.out.println("Enter -3 to make a new donation: ");
 
 			int option = 0;
 			boolean isValidOption = false;
@@ -55,6 +56,8 @@ public class UserInterface {
 				displayFund(option);
 			} else if(option == -2) {
 				allContributors();
+			} else if(option == -3) {
+				makedonations();
 			} else {
 				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
@@ -251,6 +254,88 @@ public class UserInterface {
 
 		System.out.println("Press the Enter key to go back to the listing of funds");
 		in.nextLine();
+
+	}
+	
+	public void makedonations() {
+		System.out.println("You can make new donations, please type the Fund ID");
+		
+		String fundId = in.nextLine().trim();
+		while(fundId == null || fundId.isEmpty()) {
+			System.out.println("Invalid fund ID. Please enter a ID that is non-empty: ");
+			fundId = in.nextLine().trim();
+		}
+		boolean Idflag = false;
+		while(!Idflag) {		// check if the input fund id is existed or not			
+			for(Fund f : org.getFunds()) {
+				
+				if(f.getId().equals(fundId)){
+					Idflag = true;
+				}
+			}
+			if(Idflag == false) {
+				System.out.println("Fund id doesn't exist, please try again");
+				fundId = in.nextLine();
+			}
+			
+		}		
+		
+		System.out.println("Please type the Contributor ID ");
+		String contributorId = in.nextLine();
+		while(contributorId == null || contributorId.isEmpty()) {
+			System.out.println("Invalid contributor ID. Please enter a ID that is non-empty: ");
+			fundId = in.nextLine().trim();
+		}
+		boolean nameFlag = false;
+		while(!nameFlag) {		//check if the contributor id existed in the database
+			try {
+				String name = dataManager.getContributorName(contributorId);
+				nameFlag = true;
+			}catch (Exception e) {
+				System.out.println("Contributor ID doesn't exist, please try again");
+				contributorId = in.nextLine();
+				throw new IllegalArgumentException("Contributor ID doesn't exist, please try again");
+				
+			}
+		}
+		
+		System.out.println("please type th fund amount");
+		String amount = in.nextLine();
+		
+			Donation newdonation;
+			try {
+				newdonation = dataManager.makeDonation(fundId, contributorId, amount);
+				if (newdonation == null) {
+					System.out.println("New Donation Failed!");
+				} else {
+					System.out.println("New Donation Succeed!");
+					List<Fund> fund = org.getFunds();
+					for(Fund f : fund) {
+						if(f.getId().equals(fundId)) {
+							List<Donation> donations = f.getDonations();
+							donations.add(newdonation);
+							f.setDonations(donations);
+							break;
+						}
+					}
+					int number = 1;
+					for(Fund f : org.getFunds()) {
+						if(f.getId().equals(fundId)) {
+							break;
+						}else {
+							number++;
+						}
+					}
+					displayFund(number);
+					
+				}
+			} catch (Exception e) {
+				System.out.println("Error: " + e.getMessage());
+				if (retryOperation("makeDonation")) {
+					makedonations();
+				}
+				
+			}
 	}
 	
     public void allContributors() {
