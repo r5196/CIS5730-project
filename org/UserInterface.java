@@ -5,8 +5,7 @@ import java.util.*;
 import java.text.NumberFormat;
 
 public class UserInterface {
-	
-	
+
 	private DataManager dataManager;
 	private Organization org;
 	private Scanner in = new Scanner(System.in);
@@ -63,6 +62,42 @@ public class UserInterface {
 				System.out.println("Invalid fund number. Please enter a valid fund number or 0 to create a new fund:");
 			}
 		}
+	}
+
+	/**
+	 * This is implemented in phase 3
+	 * This method is used to change the password of the organization
+	 * @param password the current password of the organization
+	 * @return true if the password is changed successfully, false otherwise
+	 */
+	public boolean changePassword(String password) {
+		System.out.println("Enter the current password:");
+		String currentPassword = in.nextLine().trim();
+		if (!currentPassword.equals(password)) {
+			System.out.println("The current password is incorrect.");
+			return false;
+		}
+		System.out.println("Enter the new password first time:");
+		String newPassword1 = in.nextLine();
+		System.out.println("Enter the new password second time:");
+		String newPassword2 = in.nextLine();
+		if(!newPassword1.equals(newPassword2)) {
+			System.out.println("The two new passwords are not the same. Please try again.");
+			return false;
+		}
+		try {
+			boolean r = dataManager.updatePasswordByOrg(org.getId(), newPassword1);
+			if (r) {
+				System.out.println("The password has been changed successfully.");
+				return true;
+			} else {
+				System.out.println("The password has not been changed.");
+				return false;
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+		return false;
 	}
 	
 	public void createFund() {
@@ -219,6 +254,7 @@ public class UserInterface {
 
 		System.out.println("Press the Enter key to go back to the listing of funds");
 		in.nextLine();
+
 	}
 	
 	public void makedonations() {
@@ -300,9 +336,6 @@ public class UserInterface {
 				}
 				
 			}
-		
-
-	
 	}
 	
     public void allContributors() {
@@ -373,42 +406,116 @@ public class UserInterface {
 		Scanner in = new Scanner(System.in);
 
 		while (true) {
-			System.out.print("Enter your login or type 'exit' to quit: ");
-			String login = in.nextLine().trim();
-			if (login.equalsIgnoreCase("exit")) {
-				break;
+			System.out.print("Enter 1 to login or Enter 2 to create a new organization: or Enter 'exit' to quit: ");
+			String choice = in.nextLine().trim();
+
+			if (choice.equals("1")) {
+				while (true) {
+					System.out.print("Enter your login:");
+					String login = in.nextLine().trim();
+					System.out.print("Enter your password: ");
+					String password = in.nextLine().trim();
+
+					Organization org = null;
+					try {
+						org = ds.attemptLogin(login, password);
+						if (org == null) {
+							System.out.println("Login failed. Username/Password combination is incorrect");
+							System.out.println("Do you want to retry the operation of login? (Yes/No)");
+							String answer = in.nextLine().trim().toLowerCase();
+							if (!answer.equals("yes")) {
+								break;
+							}
+						} else {
+							UserInterface ui = new UserInterface(ds, org);
+							System.out.println("You have logged in.");
+							while (true) {
+								System.out.println("Do you want to change your password? (Yes/No)");
+								String answer = in.nextLine().trim().toLowerCase();
+								if (answer.equals("yes")) {
+									if (ui.changePassword(password)) {
+										break;
+									}
+								} else {
+									break;
+								}
+							}
+							ui.start();
+							break;
+						}
+					} catch (Exception e) {
+						if (e instanceof IllegalArgumentException) {
+							System.out.println("Invalid Argument");
+						} else if (e instanceof IllegalStateException) {
+							System.out.println("an error occurs in communicating with the server");
+						}
+						System.out.println("Error: " + e.getMessage());
+						System.out.println("Do you want to retry the operation of login? (Yes/No)");
+						String answer = in.nextLine().trim().toLowerCase();
+						if (!answer.equals("yes")) {
+							break;
+						}
+					}
+				}
 			}
-			System.out.print("Enter your password or type 'exit' to quit: ");
-			String password = in.nextLine().trim();
-			if (login.equalsIgnoreCase("exit")) {
+
+			if (choice.equals("2")) {
+				while (true) {
+					System.out.print("Enter the login of the organization: ");
+					String newLogin = in.nextLine().trim();
+					System.out.print("Enter the password of the organization: ");
+					String newPassword = in.nextLine().trim();
+					System.out.print("Enter the name of the organization: ");
+					String newName = in.nextLine().trim();
+					System.out.print("Enter the description of the organization: ");
+					String newDescription = in.nextLine().trim();
+
+					Organization org = null;
+					try {
+						org = ds.createOrg(newLogin, newPassword, newName, newDescription);
+						System.out.println("Organization created successfully");
+
+						if (org == null) {
+							System.out.println("Organization creation failed.");
+						} else {
+							UserInterface ui = new UserInterface(ds, org);
+							while (true) {
+								System.out.println("You have logged in.");
+								System.out.println("Do you want to change your password? (Yes/No)");
+								String answer = in.nextLine().trim().toLowerCase();
+								if (answer.equals("yes")) {
+									if (ui.changePassword(newPassword)) {
+										break;
+									}
+								} else {
+									break;
+								}
+							}
+							ui.start();
+							break;
+						}
+					} catch (Exception e) {
+						System.out.println("Error: " + e.getMessage());
+						System.out.println("Do you want to retry the operation of creating a new organization? (Yes/No)");
+						String answer = in.nextLine().trim().toLowerCase();
+						if (!answer.equals("yes")) {
+							break;
+						}
+					}
+				}
+			}
+
+			if (choice.equals("exit")) {
 				break;
 			}
 
-			Organization org = null;
-			try {
-				org = ds.attemptLogin(login, password);
-			} catch (Exception e) {
-				if (e instanceof IllegalArgumentException) {
-					System.out.println("Invalid Argument");
-				} else if (e instanceof IllegalStateException) {
-					System.out.println("an error occurs in communicating with the server");
-				}
-				System.out.println("Error: " + e.getMessage());
-				System.out.println("Do you want to retry the operation of login? (Yes/No)");
-				String answer = in.nextLine().trim().toLowerCase();
-				if (answer.equals("yes")) {
-					main(args);
-				}
-			}
-
-			if (org == null) {
-				System.out.println("Login failed. Username/Password combination is incorrect");
-			} else {
-				UserInterface ui = new UserInterface(ds, org);
-				ui.start();
+			if (!choice.equals("1") && !choice.equals("2") && !choice.equals("exit")) {
+				System.out.println("Invalid choice. Please try again.");
 			}
 		}
 		in.close();
 	}
+
+
 
 }

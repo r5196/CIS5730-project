@@ -215,7 +215,7 @@ public class DataManager {
 	 * This method changes the password of the current organization after login
 	 * @return true if suceessful; false if unsuccessgul
 	 */
-	public boolean updateOrg(String orgId, String newPassword) {
+	public boolean updatePasswordByOrg(String orgId, String newPassword) {
 		if (orgId == null || orgId.isEmpty()) {
 			throw new IllegalArgumentException("Organization ID is invalid.");
 		}
@@ -230,7 +230,7 @@ public class DataManager {
 		if (client == null) {
 			throw new IllegalStateException("webClient is null");
 		}
-		String response = client.makeRequest("/updateOrg", map);
+		String response = client.makeRequest("/updatePasswordByOrg", map);
 		if (response == null) {
 			throw new IllegalStateException("webClient returns null");
 		}
@@ -357,7 +357,8 @@ public class DataManager {
  		} else {
  		    return null;
  		}
-	  }
+	}
+	
 	
  	/**
   	 * This method make a new donation in the database using the /makeDonation endpoint in the API

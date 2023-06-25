@@ -47,7 +47,7 @@ app.use('/createFund', (req, res) => {
 		    res.json({ "status": "error", "data" : err});
 		}
 		else {
-		    //console.log(fund);
+		    // console.log(fund);
 
 		    /*
 		      In addition to updating the Fund collection, we also need to
@@ -302,6 +302,69 @@ app.use('/findFundNameById', (req, res) => {
 	    });
     });
 
+/*
+This is implemented in phase 3
+create new organization
+*/
+app.use('/createOrg', (req, res) => {
+
+	var org = new Organization({
+		login: req.query.login,
+		password: req.query.password,
+		name: req.query.name,
+		description: req.query.description,
+		funds: []
+	    });
+
+	var query = {"login" : req.query.login};
+
+	// Check if login already exists in the database
+	Organization.findOne(query, (err, result) => {
+	    if (err) {
+	        res.json({'status': 'error', 'data' : err});
+	    }
+	    else if (result) {
+	        res.json({'status': 'error', 'data' : {'message': 'login already exists'}});
+	    }
+	    else {
+	        org.save( (err) => {
+                if (err) {
+                    res.json({'status' : 'error', 'data' : err});
+                }
+                else {
+                    // console.log(org);
+                    res.json({'status' : 'success', 'data' : org});
+                }
+            });
+	    }
+    });
+});
+
+/*
+This is implemented in phase 3
+update the password of an organization
+*/
+app.use('/updatePasswordByOrg', (req, res) => {
+
+    // console.log(req);
+
+	var filter = {"_id" : req.query.id };
+
+	var update = {"password" : req.query.password };
+
+	var action = {"$set" : update };
+
+	Organization.findOneAndUpdate( filter, action, { new : true }, (err, result) => {
+		if (err) {
+		    res.json({'status' : 'error', 'data' : err});
+		}
+		else {
+		    // console.log(result);
+		    res.json({'status' : 'success', 'data' : result});
+		}
+	    });
+
+    });
 
 
 /*
