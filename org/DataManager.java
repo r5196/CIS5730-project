@@ -385,7 +385,7 @@ public class DataManager {
 	        throw new IllegalArgumentException("Invalid amount. It should be a valid number.");
 	    }
 	    
-	    String name = getContributorName(contributorid);
+	    // String name = getContributorName(contributorid);
   		Map<String, Object> map = new HashMap<>();
   		map.put("fund", fundId);
   		map.put("contributor", contributorid);
@@ -417,6 +417,7 @@ public class DataManager {
   		if (status.equals("error")) {
   		    throw new IllegalStateException("Server error.");
   		}else if(status.equals("success")) {
+			String name = getContributorName(contributorid);
 			JSONObject donation = (JSONObject) json.get("data");
 			String date =   (String) donation.get("date");
 			return new Donation(fundId, name, parsedAmount, date);

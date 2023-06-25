@@ -227,4 +227,59 @@ public class DataManager_makeDonation_Test {
 	        assertNull(donation);
 	    }
 
+		@Test(expected = RuntimeException.class)
+		public void testExceptionInCreation() {
+			DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+				@Override
+				public String makeRequest(String resource, Map<String, Object> queryParams) {
+					throw new RuntimeException("Some unexpected error");
+				}
+			});
+
+			dm.makeDonation("12345", "777", "50");
+		}
+
+		// webClient returns error
+		@Test(expected = IllegalStateException.class)
+		public void testErrorStatusCreation() {
+			DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+				@Override
+				public String makeRequest(String resource, Map<String, Object> queryParams) {
+					return "{\"status\":\"error\",\"data\":{\"_id\":\"123\",\"login\":\"login1\",\"password\":\"password1\",\"name\":\"new org\",\"description\":\"this is the new org\",\"funds\":[],\"__v\":0}}";
+				}
+			});
+			dm.makeDonation("12345", "777", "50");
+		}
+
+		// webClient returns unknown status
+		@Test(expected = IllegalStateException.class)
+		public void testUnknownStatusCreation() {
+			DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+				@Override
+				public String makeRequest(String resource, Map<String, Object> queryParams) {
+					return "{\"data\":{\"_id\":\"123\",\"login\":\"login1\",\"password\":\"password1\",\"name\":\"new org\",\"description\":\"this is the new org\",\"funds\":[],\"__v\":0}}";
+				}
+			});
+			dm.makeDonation("12345", "777", "50");
+		}
+
+		// webClient returns null
+		@Test(expected = IllegalStateException.class)
+		public void testNullStatusCreation() {
+			DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+				@Override
+				public String makeRequest(String resource, Map<String, Object> queryParams) {
+					return null;
+				}
+			});
+			dm.makeDonation("12345", "777", "50");
+		}
+
+		// webClient is null
+		@Test(expected = IllegalStateException.class)
+		public void testNullWebClientCreation() {
+			DataManager dm = new DataManager(null);
+			dm.makeDonation("12345", "777", "50");
+		}
+
 }
