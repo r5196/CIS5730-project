@@ -99,6 +99,113 @@ public class UserInterface {
 		}
 		return false;
 	}
+
+	public void editOrgAccountInfo() {
+		String password = "";
+		while (true) {
+			System.out.print("Please enter your password: ");
+			password = in.nextLine().trim();
+			if (password.isEmpty()) {
+				System.out.println("Please enter your password: ");
+			} else {
+				boolean verifyPassword;
+				try {
+					verifyPassword = dataManager.verifyOrgPassword(org.getId(), password);
+				} catch (IllegalArgumentException e) {
+					System.out.println("Error: " + e.getMessage());
+					return;
+				} catch (IllegalStateException e) {
+                    System.out.println("Error: " + e.getMessage());
+                    return;
+                }
+
+				if (verifyPassword) {
+					break;
+				} else {
+					System.out.println("Please enter the CORRECT password");
+					return;
+				}
+			}
+		}
+
+		int ifUpdateName;
+		do {
+			System.out.println("\nCurrent organization name: " + org.getName());
+			System.out.println("Enter 1 to keep the current name, enter 2 to update with a new name");
+			while (!in.hasNextInt()) {
+				System.out.println("The number you entered is invalid. Please enter either 1 or 2: ");
+				in.next();
+			}
+			ifUpdateName = in.nextInt();
+			in.nextLine();
+		} while (ifUpdateName != 1 && ifUpdateName != 2);
+		
+		String postName;
+		if (ifUpdateName == 1) {
+			postName = org.getName();
+		} else {
+			do {
+				System.out.print("\nPlease enter the new name: ");
+				postName = in.nextLine().trim();
+				if (postName.isEmpty()) {
+					System.out.println("Please make sure you have entered the new name: ");
+				} else {
+					break;
+				}
+			} while (true);
+		}
+
+		int ifUpdateDes;
+		do {
+			System.out.println("\nCurrent organization description: " + org.getName());
+			System.out.println("Enter 1 to keep the current description, enter 2 to update with a new description");
+			while (!in.hasNextInt()) {
+				System.out.println("The number you entered is invalid. Please enter either 1 or 2: ");
+				in.next();
+			}
+			ifUpdateDes = in.nextInt();
+			in.nextLine();
+		} while (ifUpdateDes != 1 && ifUpdateDes != 2);
+
+		String postDes;
+		if (ifUpdateDes == 1) {
+			postDes= org.getDescription();
+		} else {
+			do {
+				System.out.print("\nPlease enter the new description: ");
+				postDes = in.nextLine().trim();
+				if (postDes.isEmpty()) {
+					System.out.println("Please make sure you have entered the new description: ");
+				} else {
+					break;
+				}
+			} while (true);
+		}
+
+		if (postName.equals(org.getName()) && postDes.equals(org.getDescription())) {
+			System.out.println("\nBoth the name and description for the organization remain the same.");
+			return;
+		}
+
+		boolean ifSuccess;
+		try {
+			ifSuccess = dataManager.updateOrgAccount(org.getId(), postName, postDes);
+		} catch (IllegalArgumentException e) {
+			System.out.println("Error: " + e.getMessage());
+			return;
+		} catch (IllegalStateException e) {
+			System.out.println("Error: " + e.getMessage());
+			return;
+		}
+
+		if (ifSuccess) {
+			org.setName(postName);
+			org.setDescription(postDes);
+			System.out.println("\nYou have updated the account information. The updated organization name is: " + org.getName() + " and the updated organization description is: " + org.getDescription() + ".");
+		} else {
+			System.out.println("\nThe update is not successful.");
+		}
+	}
 	
 	public void createFund() {
 		
