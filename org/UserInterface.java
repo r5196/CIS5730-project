@@ -115,8 +115,8 @@ public class UserInterface {
 					System.out.println("Error: " + e.getMessage());
 					return;
 				} catch (IllegalStateException e) {
-                    System.out.println("Error: " + e.getMessage());
-                    return;
+                    			System.out.println("Error: " + e.getMessage());
+                    			return;
                 }
 
 				if (verifyPassword) {
