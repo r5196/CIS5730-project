@@ -426,4 +426,98 @@ public class DataManager {
   		}
  	  }
 
+    public boolean verifyOrgPassword(String orgId, String password) {
+        if (client == null) {
+            throw new IllegalStateException("WebClient is null.");
+        }
+
+        if (orgId == null) {
+            throw new IllegalArgumentException("The ID for Organization is null.");
+        }
+
+        if (password == null) {
+            throw new IllegalArgumentException("The password for Organization is null.");
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("_id", orgId);
+        map.put("password", password);
+
+        String response = client.makeRequest("/verifyOrgPassword", map);
+
+        if (response == null) {
+            throw new IllegalStateException("WebClient returns null.");
+        }
+
+        JSONParser parser = new JSONParser();
+        JSONObject json = null;
+        try {
+            json = (JSONObject) parser.parse(response);
+        } catch (ParseException e) {
+            throw new IllegalStateException("WebClient returns malformed JSON.");
+        }
+
+        String status = (String) json.get("status");
+
+        if (status == null) {
+            throw new IllegalStateException("WebClient returns missing status.");
+        }
+
+        if (status.equals("error")) {
+            throw new IllegalStateException("Server error.");
+        } else {
+            return status.equals("success");
+        }
+    }
+	
+
+  public boolean updateOrgAccount(String orgId, String name, String description) {
+        if (client == null) {
+            throw new IllegalStateException("WebClient is null.");
+        }
+
+        if (orgId == null) {
+            throw new IllegalArgumentException("The ID for Organization is null.");
+        }
+
+        if (name == null) {
+            throw new IllegalArgumentException("The name for Organization is null.");
+        }
+
+        if (description == null) {
+            throw new IllegalArgumentException("The description for Organization is null.");
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("_id", orgId);
+        map.put("name", name);
+        map.put("description", description);
+
+        String response = client.makeRequest("/updateOrgAccount", map);
+
+        if (response == null) {
+            throw new IllegalStateException("WebClient returns null.");
+        }
+
+        JSONParser parser = new JSONParser();
+        JSONObject json = null;
+        try {
+            json = (JSONObject) parser.parse(response);
+        } catch (ParseException e) {
+            throw new IllegalStateException("WebClient returns malformed JSON.");
+        }
+
+        String status = (String) json.get("status");
+
+        if (status == null) {
+            throw new IllegalStateException("WebClient returns missing status.");
+        }
+
+        if (status.equals("error")) {
+            throw new IllegalStateException("Server error.");
+        } else {
+            return status.equals("success");
+        }
+    }
+
 }
