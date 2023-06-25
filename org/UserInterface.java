@@ -100,7 +100,7 @@ public class UserInterface {
 		return false;
 	}
 
-	public void editOrgAccountInfo() {
+	public boolean editOrgAccountInfo() {
 		String password = "";
 		while (true) {
 			System.out.print("Please enter your password: ");
@@ -202,8 +202,10 @@ public class UserInterface {
 			org.setName(postName);
 			org.setDescription(postDes);
 			System.out.println("\nYou have updated the account information. The updated organization name is: " + org.getName() + " and the updated organization description is: " + org.getDescription() + ".");
+			return true;
 		} else {
 			System.out.println("\nThe update is not successful.");
+			return false;
 		}
 	}
 	
@@ -543,6 +545,18 @@ public class UserInterface {
 									if (ui.changePassword(password)) {
 										break;
 									}
+								} else {
+									break;
+								}
+							}
+							while (true) {
+								System.out.println("Do you want to edit org account information? (Yes/No)");
+								String answer = in.nextLine().trim().toLowerCase();
+								if (answer.equals("yes")) {
+									if (ui.editOrgAccountInfo()) {
+										System.out.println("Account information successfully updated.");
+										break;
+									} 
 								} else {
 									break;
 								}
