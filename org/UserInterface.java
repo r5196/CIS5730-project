@@ -159,7 +159,7 @@ public class UserInterface {
 
 		int ifUpdateDes;
 		do {
-			System.out.println("\nCurrent organization description: " + org.getName());
+			System.out.println("\nCurrent organization description: " + org.getDescription());
 			System.out.println("Enter 1 to keep the current description, enter 2 to update with a new description");
 			while (!in.hasNextInt()) {
 				System.out.println("The number you entered is invalid. Please enter either 1 or 2: ");
