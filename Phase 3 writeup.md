@@ -33,7 +33,7 @@ Instructions on how to start each app, if you changed anything from the original
 		String password = args[1];
 ```
 
-- **Now, to run the program, you should run the UserInterface class, but do not need to pass the login ID and password as the runtime arguments to the main method. The program will now ask you to enter the login ID and password that you created for an organization via the Admin app after the program runs.**
+- **Now, to run the program, you should run the UserInterface class, but do not need to pass the login ID and password as the runtime arguments to the main method. If choosing to log in, the program will now ask you to enter the login ID and password that you created for an organization via the Admin app after the program runs. Or you can choose to create a org without providing login/password.**
 ```
 	public static void main(String[] args) {
 		
