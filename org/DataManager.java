@@ -440,7 +440,7 @@ public class DataManager {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("_id", orgId);
+        map.put("id", orgId);
         map.put("password", password);
 
         String response = client.makeRequest("/verifyOrgPassword", map);
@@ -489,7 +489,7 @@ public class DataManager {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("_id", orgId);
+        map.put("id", orgId);
         map.put("name", name);
         map.put("description", description);
 
