@@ -553,7 +553,7 @@ public void editOrgAccountInfo() {
 								System.out.println("Do you want to edit org account information? (Yes/No)");
 								String answer = in.nextLine().trim().toLowerCase();
 								if (answer.equals("yes")) {
-									if (answer.equals("yes")) {
+									// if (answer.equals("yes")) {
 									ui.editOrgAccountInfo();
 								} else {
 									break;
