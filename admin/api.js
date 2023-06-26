@@ -372,7 +372,7 @@ update the org account
 */
 app.use('/updateOrgAccount', (req, res) => {
 
-	var filter = { "_id": req.query._id };
+	var filter = { "_id": req.query.id };
 
 	var update = { "name": req.query.name, "description": req.query.description };
 
@@ -398,7 +398,7 @@ verify the org password
 */
 app.use('/verifyOrgPassword', (req, res) => {
 
-	var query = { "_id": req.query._id, "password": req.query.password };
+	var query = { "_id": req.query.id, "password": req.query.password };
 
 	Organization.findOne(query, (err, result) => {
 		if (err) {
