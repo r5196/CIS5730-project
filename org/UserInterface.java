@@ -562,7 +562,6 @@ public void editOrgAccountInfo() {
 							ui.start();
 							break;
 						}
-					 } 
 					}catch (Exception e) {
 						if (e instanceof IllegalArgumentException) {
 							System.out.println("Invalid Argument");
