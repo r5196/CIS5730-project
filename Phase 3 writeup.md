@@ -15,6 +15,7 @@ For each task you completed in this phase, a brief description of the changes yo
 
 ## Q3
 Any known bugs or other issues with the tasks you attempted in this phase.
+
 Task 3.3
    - The task requirement states that "If the user successfully edits their account info, they should see a message indicating so and see the menu that allows them to view funds, create a new fund, etc.". **However**, we believe it would be more reasonable to inquire if the user wishes to continue modifying their account information before presenting the fund options. This approach enables the user to make further updates until they are satisfied. Once the user responds with "no" to the prompt, "Do you want to edit org account information? (Yes/No)," they will then gain access to the fund options.
    - Two endpoints were added for they serve different purposes and involve distinct operations. The /updateOrgAccount endpoint is responsible for updating the organization's account information, such as name and description. On the other hand, the /verifyOrgPassword endpoint is used to verify the organization's password. By keeping these endpoints separate, the code remains more modular and follows the principle of single responsibility. This separation allows for better code organization and maintainability in the long run. Additionally, separating the endpoints provides flexibility if there is a need to enhance or modify each functionality independently in the future. Therefore, we chose to add two endpoints instead of one.
