@@ -100,33 +100,35 @@ public class UserInterface {
 		return false;
 	}
 
-public void editOrgAccountInfo() {
-		String password = "";
-		while (true) {
-			System.out.print("Please enter your password: ");
-			password = in.nextLine().trim();
-			if (password.isEmpty()) {
-				System.out.println("Please enter your password: ");
-			} else {
-				boolean verifyPassword;
-				try {
-					verifyPassword = dataManager.verifyOrgPassword(org.getId(), password);
-				} catch (IllegalArgumentException e) {
-					System.out.println("Error: " + e.getMessage());
-					return;
-				} catch (IllegalStateException e) {
-                    System.out.println("Error: " + e.getMessage());
-                    return;
-                }
 
-				if (verifyPassword) {
-					break;
-				} else {
-					System.out.println("Please enter the CORRECT password");
-					return;
-				}
-			}
-		}
+	public void editOrgAccountInfo() {
+		String pwd;
+				do {
+					System.out.print("\nEnter your password: ");
+					pwd = in.nextLine().trim();
+					if (!pwd.isEmpty()) {
+						boolean isCorrect;
+						try {
+							isCorrect = dataManager.verifyOrgPassword(org.getId(), pwd);
+						} catch (IllegalArgumentException e) {
+							System.out.println("Error: " + e.getMessage());
+							return;
+						} catch (IllegalStateException e) {
+							System.out.println("Error: " + e.getMessage());
+							return;
+						}
+
+						if (isCorrect) {
+							break;
+						} else {
+							System.out.println("\nPlease enter the CORRECT password.");
+							return;
+						}
+					} else {
+						System.out.println("Password is required.");
+					}
+				} while (true);
+
 
 		int ifUpdateName;
 		do {
@@ -202,12 +204,12 @@ public void editOrgAccountInfo() {
 			org.setName(postName);
 			org.setDescription(postDes);
 			System.out.println("\nYou have updated the account information. The updated organization name is: " + org.getName() + " and the updated organization description is: " + org.getDescription() + ".");
-			return;
 		} else {
 			System.out.println("\nThe update is not successful.");
-			return;
 		}
 	}
+
+
 	
 	public void createFund() {
 		
@@ -610,6 +612,16 @@ public void editOrgAccountInfo() {
 									break;
 								}
 							}
+							while (true) {
+				                                System.out.println("Do you want to edit org account information? (Yes/No)");
+				                                String answer = in.nextLine().trim().toLowerCase();
+				                                if (answer.equals("yes")) {
+				                                    // if (answer.equals("yes")) {
+				                                    ui.editOrgAccountInfo();
+				                                } else {
+				                                    break;
+				                                }
+				                        }
 							ui.start();
 							break;
 						}
