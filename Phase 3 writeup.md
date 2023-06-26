@@ -7,6 +7,9 @@ For each task you completed in this phase, a brief description of the changes yo
 1. **Task 3.1 adds createOrg() method in data manager class. The task also changes main() method in userinterface class. The task finally adds /creatOrg endpoint in api.js. Task 3.1 checks if any field is blank in createOrg() method in data manager classs. In the case, the method will throw exception and indicate the field is invalid. The task checks if the org login already exists using /createOrg endpoint in api.js.**
 2. **Task 3.2 adds updateOrg method in data manager class. The task also changes main() method in user interface by adding change password method. Finally the task adds /updateOrg endpoint in api.js.**
 
+3. 
+4. **Task 3.4 adds makeDonation methond in DataManager class and makeDonations() in UserInterface class. MakeDonations() methods deals with situation when fund id and contributor id are not existed, donation amount is less than 0 or is not a number, allowing users to retry. makedonation_test file is also added to test all features for makedonation function.**
+
 
 
 ## Q3
