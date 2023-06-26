@@ -453,7 +453,7 @@ public class DataManager {
         JSONObject json = null;
         try {
             json = (JSONObject) parser.parse(response);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("WebClient returns malformed JSON.");
         }
 
@@ -503,7 +503,7 @@ public class DataManager {
         JSONObject json = null;
         try {
             json = (JSONObject) parser.parse(response);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("WebClient returns malformed JSON.");
         }
 
