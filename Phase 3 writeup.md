@@ -8,7 +8,8 @@ For each task you completed in this phase, a brief description of the changes yo
 2. **Task 3.2 adds updateOrg method in data manager class. The task also changes main() method in user interface by adding change password method. Finally the task adds /updateOrg endpoint in api.js.**
 
 3. **Task 3.3 adds verifyOrgPassword() and updateAccountInfo() methods in DataManager class, and editOrgAccountInfo() in the UserInterface class. By adding those methods, the Organzation app allows the user to edit the account information. The corresponding unit tests have also been added. In addition, setName() and setDescription() methods were added in Organization class. Moreover, 2 new endpoints, /verifyOrgPassword and /updateOrgAccount, were added in admin/api.js.**
-4. **Task 3.4 adds makeDonation methond in DataManager class and makeDonations() in UserInterface class. MakeDonations() methods deals with normal donation process and also situations when fund id and contributor id are not existed, donation amount is less than 0 or is not a number, all inputs are null, etc. During these situations, users are allowed to retry. makedonation_test file is also added to test all features for makedonation function.**
+   - Note: the users will be given chances of updating the account information till they specifically enter "no". After entering "no", they will then be able to see the menu that allows them to view funds, etc. 
+5. **Task 3.4 adds makeDonation methond in DataManager class and makeDonations() in UserInterface class. MakeDonations() methods deals with normal donation process and also situations when fund id and contributor id are not existed, donation amount is less than 0 or is not a number, all inputs are null, etc. During these situations, users are allowed to retry. makedonation_test file is also added to test all features for makedonation function.**
 
 
 
